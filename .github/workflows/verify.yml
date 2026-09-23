@@ -7,7 +7,10 @@ on:
     paths: ['game/**', '.github/workflows/verify.yml']
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -20,7 +23,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install pinned dependencies
+      - name: Install dependencies
         run: npm install --no-audit --no-fund
       - name: Unit tests
         run: npm test
@@ -37,8 +40,14 @@ jobs:
         run: |
           npx playwright install --with-deps chromium
           npm run test:browser
-      - name: Archive verification evidence
+      - name: Save bounded evidence in private repository
+        if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/publish-evidence.mjs
+      - name: Archive downloadable build when storage is available
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: verification-evidence
@@ -46,14 +55,4 @@ jobs:
             game/artifacts/
             game/package-lock.json
             game/dist/
-          retention-days: 7
-      - name: Offline development dependencies
-        if: hashFiles('game/index.html') == ''
-        run: tar -czf artifacts/dependencies.tar.gz node_modules package-lock.json
-      - name: Archive development dependencies
-        if: hashFiles('game/index.html') == ''
-        uses: actions/upload-artifact@v4
-        with:
-          name: development-dependencies
-          path: game/artifacts/dependencies.tar.gz
           retention-days: 1
