@@ -1,9 +1,6 @@
 {
-  "phase": "drive",
-  "checks": [
-    "Real renderer, reference data and physics initialized",
-    "Enter nearby vehicle through keyboard input"
-  ],
+  "phase": "load production game",
+  "checks": [],
   "errors": [],
   "warnings": [
     "THREE.Material: parameter 'map' has value of undefined.",
@@ -25,91 +22,37 @@
     "using deprecated parameters for the initialization function; pass a single object instead",
     "THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported."
   ],
-  "snapshots": [
-    {
-      "ready": true,
-      "started": false,
-      "paused": true,
-      "photo": false,
-      "actor": {
-        "x": 2000,
-        "y": 3.7399999999999998,
-        "z": -420,
-        "yaw": 3.141592653589793,
-        "speed": 0,
-        "driving": false,
-        "health": 100,
-        "grounded": false
-      },
-      "car": {
-        "x": 1998,
-        "y": 3.950000047683716,
-        "z": -425,
-        "health": 100
-      },
-      "progress": {
-        "version": 1,
-        "money": 0,
-        "completed": [],
-        "bestTimes": {},
-        "discovered": [],
-        "mission": null,
-        "heat": 0,
-        "unseen": 0,
-        "playSeconds": 0
-      },
-      "world": {
-        "chunks": 9,
-        "pending": 0,
-        "colliders": 727
-      },
-      "assets": {
-        "characters": 2,
-        "landmarks": 2716
-      },
-      "traffic": {
-        "cars": 0,
-        "pedestrians": 0
-      },
-      "render": {
-        "calls": 187,
-        "triangles": 291760,
-        "geometries": 92,
-        "textures": 20,
-        "frameMs": 48.241513404897475
-      }
-    }
-  ],
+  "snapshots": [],
   "captures": {
-    "menu": {
+    "failure": {
       "source": "Actual WebGL canvas readback, without DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 119645
+      "bytes": 119374
     }
   },
-  "startedAt": "2026-09-23T00:49:26.899Z",
+  "startedAt": "2026-09-23T00:54:27.437Z",
   "browser": "140.0.7339.16",
-  "failure": "AssertionError [ERR_ASSERTION]: Vehicle must physically move\n    at file:///home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:44:26",
+  "failure": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(s.render.triangles>10000)\n\n    at file:///home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:38:65",
   "failureSnapshot": {
     "ready": true,
-    "started": true,
-    "paused": false,
+    "started": false,
+    "paused": true,
     "photo": false,
     "actor": {
-      "x": 1998,
-      "y": 3.2088717937469484,
-      "z": -425.0435791015625,
+      "x": 2000,
+      "y": 3.7399999999999998,
+      "z": -420,
       "yaw": 3.141592653589793,
-      "speed": 3.286750754373513e-13,
-      "driving": true,
+      "speed": 0,
+      "driving": false,
       "health": 100,
-      "grounded": true
+      "grounded": false
     },
     "car": {
       "x": 1998,
-      "y": 3.7588717937469482,
-      "z": -425.0435791015625,
+      "y": 3.950000047683716,
+      "z": -425,
       "health": 100
     },
     "progress": {
@@ -117,13 +60,11 @@
       "money": 0,
       "completed": [],
       "bestTimes": {},
-      "discovered": [
-        "Ocean Beach"
-      ],
+      "discovered": [],
       "mission": null,
       "heat": 0,
-      "unseen": 3.2833333333333266,
-      "playSeconds": 3.2833333333333266
+      "unseen": 0,
+      "playSeconds": 0
     },
     "world": {
       "chunks": 9,
@@ -135,17 +76,17 @@
       "landmarks": 2716
     },
     "traffic": {
-      "cars": 6,
-      "pedestrians": 10
+      "cars": 0,
+      "pedestrians": 0
     },
     "render": {
-      "calls": 407,
-      "triangles": 288722,
-      "geometries": 380,
-      "textures": 98,
-      "frameMs": 108.90687224814259
+      "calls": 187,
+      "triangles": 291760,
+      "geometries": 92,
+      "textures": 20,
+      "frameMs": 48.241513404897475
     }
   },
-  "finishedAt": "2026-09-23T00:50:46.672Z",
+  "finishedAt": "2026-09-23T00:54:50.780Z",
   "serverLog": "  \u001b[32m➜\u001b[39m  \u001b[1mLocal\u001b[22m:   \u001b[36mhttp://127.0.0.1:\u001b[1m4173\u001b[22m/\u001b[39m\n"
 }
