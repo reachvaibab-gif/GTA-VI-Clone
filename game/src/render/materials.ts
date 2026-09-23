@@ -30,7 +30,17 @@ export class Materials {
     add('paint',0xffffff,.29,.42);this.values.paint.envMapIntensity=1.6;
     add('leaf',0x829669,.88);this.values.leaf.side=T.DoubleSide;
     add('stripe',0xe6dcc0,.8);add('red',0x8d322c,.6);add('skin',0xbf8c67,.9);
-    add('neon',0xffffff,.4);this.values.neon.emissive.set(0xffffff);this.values.neon.emissiveIntensity=1.8;
+    add('neon',0xffffff,.4);
+    this.values.neon.onBeforeCompile=shader=>{
+      shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vEmissionTint;').replace('#include <color_vertex>',`#include <color_vertex>
+        #ifdef USE_INSTANCING_COLOR
+          vEmissionTint=instanceColor;
+        #else
+          vEmissionTint=vec3(1.0);
+        #endif`);
+      shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 vEmissionTint;').replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\ntotalEmissiveRadiance *= vEmissionTint;');
+    };
+    this.values.neon.customProgramCacheKey=()=> 'instance-emission-r180-v1';this.values.neon.emissive.set(0xffffff);this.values.neon.emissiveIntensity=1.8;
     add('windowLight',0xcca774,.5);this.values.windowLight.emissive.set(0xffb064);this.values.windowLight.emissiveIntensity=.18;
   }
   async load(data:AssetData){

@@ -3,6 +3,7 @@ import RAPIER from '@dimforge/rapier3d-compat';
 import { Batch, Primitives } from '../render/batch';
 import { Materials } from '../render/materials';
 import { worldUV } from '../render/world-uv';
+import { lampPlacement } from './street-lights.mjs';
 import { planStreaming } from './stream-plan.mjs';
 import { building,palm,streetLamp,bench,type BoxCollider } from './architecture';
 import { CHUNK_SIZE,SEGMENTS,wantedChunks,terrainHeight,isLand,nearestRoad,districtAt,WORLD_BOUNDS } from './layout.mjs';
@@ -82,7 +83,7 @@ export class WorldStream {
           const r=nearestRoad(xx,zz);if(r&&r.segment.id!==s.id&&r.distance<r.segment.width*.6)continue;
           batch.box('sidewalk',xx,y+.13,zz,4.6,.42,length,0xffffff,s.yaw);
           boxCollider({x:xx,y:y+.1,z:zz,hx:2.3,hy:.21,hz:length/2,yaw:s.yaw});
-          if(i%4===0)streetLamp(batch,x+dx*side*(off+1.1),z+dz*side*(off+1.1),y,s.yaw-side*Math.PI/2);
+          if(i%4===0){const lamp=lampPlacement(s,i,side)!;streetLamp(batch,lamp.x,lamp.z,y,lamp.yaw);}
         }
         if(!isLand(x,z)&&s.kind==='bridge'){
           for(const side of [-1,1]){

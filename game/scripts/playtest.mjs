@@ -19,20 +19,22 @@ async function shot(name){
   const data=await timeout(page.evaluate(()=>window.__game.capture()),30000,'WebGL frame readback');
   assert.ok(data.startsWith('data:image/jpeg;base64,'));
   const bytes=Buffer.from(data.split(',')[1],'base64');
+  const metadata=await sharp(bytes).metadata();
   const stats=await sharp(bytes).stats();assert.ok(stats.channels.some(c=>c.stdev>10),'Rendered frame must not be blank');
   await fs.writeFile(`${output}/${name}.jpg`,bytes);
   await sharp(bytes).resize({width:480}).webp({quality:55}).toFile(`${output}/${name}-preview.webp`);
   await sharp(bytes).resize({width:360}).jpeg({quality:32}).toFile(`${output}/preview.jpg`);
-  report.captures[name]={source:'Actual WebGL canvas, simulation suspended during readback; no DOM overlay',width:1280,height:800,bytes:bytes.length};
+  report.captures[name]={source:'Actual WebGL canvas, simulation suspended during readback; no DOM overlay',width:metadata.width,height:metadata.height,bytes:bytes.length};
   await write();
 }
 const watchdog=setTimeout(async()=>{report.failure=report.failure??`Global browser deadline at phase ${report.phase}`;await write();console.error(report.failure);stopServer();process.exit(1);},330000);watchdog.unref();
 try{
   for(let n=0;n<100;n++){try{if((await fetch('http://127.0.0.1:4173/')).ok)break;}catch{}await new Promise(r=>setTimeout(r,200));}
-  await phase('launch browser');browser=await chromium.launch({channel:'chromium',headless:process.env.LEONIDA_HEADED!=='1',timeout:45000,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-dev-shm-usage']});
+  await phase('launch browser');browser=await chromium.launch({channel:'chromium',headless:process.env.LEONIDA_HEADED!=='1',timeout:45000,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-dev-shm-usage','--disable-gpu-watchdog','--disable-background-timer-throttling','--disable-renderer-backgrounding']});
+  report.softwareGpu='SwiftShader; GPU watchdog disabled for diagnostic readback; application and per-operation deadlines remain enforced. Not a hardware performance benchmark.';
   report.browser=browser.version();report.headed=process.env.LEONIDA_HEADED==='1';
-  const context=await browser.newContext({viewport:{width:1280,height:800},deviceScaleFactor:1});page=await context.newPage();page.setDefaultTimeout(20000);
-  page.on('pageerror',e=>{errors.push(e.message);write().catch(()=>{});});page.on('console',m=>{if(m.type()==='error'){errors.push(m.text());write().catch(()=>{});}if(m.type()==='warning')warnings.push(m.text());});
+  const context=await browser.newContext({viewport:{width:960,height:600},deviceScaleFactor:1});page=await context.newPage();page.setDefaultTimeout(20000);
+  page.on('pageerror',e=>{errors.push(e.message);write().catch(()=>{});});page.on('console',m=>{if(m.type()==='error'){errors.push(m.text());write().catch(()=>{});}if(m.type()==='warning'){warnings.push(m.text());if(/CONTEXT_LOST_WEBGL|context lost/i.test(m.text()))errors.push(m.text());}});
   page.on('requestfailed',r=>errors.push(`${r.method()} ${r.url()}: ${r.failure()?.errorText}`));
   await phase('load production game');await page.goto('http://127.0.0.1:4173/?test=1&quality=low',{waitUntil:'networkidle',timeout:60000});
   await page.waitForFunction(()=>window.__game?.snapshot().ready||document.querySelector('.fatal pre'),undefined,{timeout:90000});
@@ -65,7 +67,7 @@ try{
   assert.ok(s.render.geometries<=resident.geometries+4,'Quality cycling must release superseded mesh geometry');
   assert.ok(s.render.textures<=resident.textures+2,'Quality cycling must release superseded sign textures');
   checks.push('Quality changes replace existing chunks and keep GPU resource counts bounded');report.snapshots.push(s);
-  await page.click('#settings [data-close]');await phase('visual capture');
+  await page.click('#settings [data-close]');await phase('visual capture');await page.setViewportSize({width:1280,height:800});
   await page.evaluate(()=>window.__game.view(2120,48,-265,1930,10,-650));await shot('aerial');
   await page.evaluate(()=>{window.__game.setTime(21);window.__game.view(2017,8,-315,1952,11,-530);});await shot('night');checks.push('Photo camera and night lighting render at balanced quality');
   await page.evaluate(()=>window.__game.save());assert.ok(await page.evaluate(()=>localStorage.getItem('leonida.after-hours.v1')));checks.push('Versioned progress persists to local storage');

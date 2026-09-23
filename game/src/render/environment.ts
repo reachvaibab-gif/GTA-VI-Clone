@@ -2,6 +2,8 @@ import * as T from 'three';
 import { Sky } from 'three/addons/objects/Sky.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { clamp } from '../core/math.mjs';
+import { SEGMENTS,terrainHeight,nearestRoad } from '../world/layout.mjs';
+import { buildStreetLights,selectStreetLights,type StreetLight } from '../world/street-lights.mjs';
 export class Environment {
   readonly sky=new Sky();readonly sun=new T.DirectionalLight(0xffedcf,3.2);
   readonly hemi=new T.HemisphereLight(0xb1d0ec,0x9a8260,.65);
@@ -9,6 +11,10 @@ export class Environment {
   private target=new T.Object3D();private environment:T.WebGLRenderTarget;night=0;
   private dayFog=new T.Color(0xb5c9d2);private duskFog=new T.Color(0xc8b5a3);private nightFog=new T.Color(0x152336);
   private sunlight=new T.Color(0xfff1df);private sunset=new T.Color(0xffbe80);
+  private nightBackground=new T.Color(0x0e1b31);private nightWater=new T.Color(0x081d2d);private sunDirection=new T.Vector3();
+  private lampAnchors=buildStreetLights(SEGMENTS,terrainHeight,nearestRoad);
+  private lampSlots:{light:T.PointLight;anchor:StreetLight|null}[]=[];
+  private selectedAt=-Infinity;private selectionFocus=new T.Vector3(Infinity,Infinity,Infinity);
   constructor(readonly scene:T.Scene,renderer:T.WebGLRenderer){
     this.sky.scale.setScalar(45000);scene.add(this.sky);
     const u=this.sky.material.uniforms;u.turbidity.value=4.2;u.rayleigh.value=2.1;u.mieCoefficient.value=.006;u.mieDirectionalG.value=.84;
@@ -17,10 +23,13 @@ export class Environment {
     this.sun.target=this.target;scene.add(this.sun,this.target,this.hemi);
     const pmrem=new T.PMREMGenerator(renderer),room=new RoomEnvironment();this.environment=pmrem.fromScene(room,.025);scene.environment=this.environment.texture;scene.environmentIntensity=.3;room.dispose();pmrem.dispose();
     scene.fog=new T.FogExp2(0xc0cccf,.000095);
+    // Four reusable, unshadowed lights, independent of district size. Keeping their count fixed
+    // avoids recompiling every material when a lamp enters/leaves the player's neighborhood.
+    for(let i=0;i<4;i++){const light=new T.PointLight(0xffd9ac,0,38,2);scene.add(light);this.lampSlots.push({light,anchor:null});}
     const material=new T.ShaderMaterial({
       uniforms:{time:{value:0},sunDirection:{value:new T.Vector3(.4,.5,.1)},sunColor:{value:new T.Color(0xffe6c0)},skyColor:{value:new T.Color(0xb8cfdb)},deepColor:{value:new T.Color(0x176d77)},night:{value:0}},
       vertexShader:`varying vec3 vWorld;uniform float time;
-      void main(){vec3 p=position;vec4 world=modelMatrix*vec4(p,1.);vWorld=world.xyz;gl_Position=projectionMatrix*viewMatrix*world;}`,
+      void main(){vec4 world=modelMatrix*vec4(position,1.);vWorld=world.xyz;gl_Position=projectionMatrix*viewMatrix*world;}`,
       fragmentShader:`varying vec3 vWorld;uniform float time;uniform vec3 sunDirection;uniform vec3 sunColor;uniform vec3 skyColor;uniform vec3 deepColor;uniform float night;
       void main(){vec2 p=vWorld.xz;float a=p.x*.10+p.y*.14+time*.7;float b=p.x*.24-p.y*.19+time*1.1;
       vec3 n=normalize(vec3(cos(a)*.10+cos(b)*.035,1.,sin(a)*.08-sin(b)*.06));vec3 v=normalize(cameraPosition-vWorld);
@@ -34,17 +43,33 @@ export class Environment {
     });
     this.water=new T.Mesh(new T.PlaneGeometry(70000,70000),material);this.water.rotation.x=-Math.PI/2;this.water.position.y=.08;scene.add(this.water);
   }
+  private illuminate(time:number,focus:T.Vector3){
+    if(time-this.selectedAt>.35||focus.distanceToSquared(this.selectionFocus)>24*24){
+      this.selectedAt=time;this.selectionFocus.copy(focus);
+      const selected=selectStreetLights(this.lampAnchors,focus,this.lampSlots.flatMap(slot=>slot.anchor?[slot.anchor.id]:[]));
+      const ids=new Set(selected.map(a=>a.id)),retained=new Set<string>();
+      for(const slot of this.lampSlots){if(slot.anchor&&ids.has(slot.anchor.id))retained.add(slot.anchor.id);else slot.anchor=null;}
+      const available=selected.filter(anchor=>!retained.has(anchor.id));
+      for(const slot of this.lampSlots)if(!slot.anchor)slot.anchor=available.shift()??null;
+    }
+    for(const slot of this.lampSlots){
+      const a=slot.anchor;if(!a){slot.light.intensity=0;continue;}
+      slot.light.position.set(a.lightX,a.y,a.lightZ);
+      const distance=Math.hypot(a.x-focus.x,a.z-focus.z),edge=1-T.MathUtils.smoothstep(distance,65,135);
+      slot.light.intensity=190*this.night*edge;
+    }
+  }
   update(hour:number,time:number,focus:T.Vector3){
     const angle=(hour-6)/24*Math.PI*2,altitude=Math.sin(angle),azimuth=(hour/24)*Math.PI*2;
-    const dir=new T.Vector3(Math.cos(azimuth)*.65,Math.max(.04,altitude),Math.sin(azimuth)*.65).normalize();
+    const dir=this.sunDirection.set(Math.cos(azimuth)*.65,Math.max(.04,altitude),Math.sin(azimuth)*.65).normalize();
     const dusk=1-clamp(altitude*1.8,0,1);this.night=clamp((.13-altitude)*4,0,1);
     this.sky.material.uniforms.sunPosition.value.copy(dir);this.sky.material.uniforms.turbidity.value=3.8+this.night*2;
     this.sun.intensity=(1-this.night)*3.4+.07;this.sun.color.copy(this.sunlight).lerp(this.sunset,dusk*.72);
     this.hemi.intensity=.7-this.night*.47;this.hemi.color.set(this.night>.7?0x6981b7:0xa5c9e5);this.hemi.groundColor.set(0x79654d);
     this.sun.position.copy(focus).addScaledVector(dir,250);this.target.position.copy(focus);this.target.updateMatrixWorld();
     const fog=this.scene.fog as T.FogExp2;fog.color.copy(this.dayFog).lerp(this.duskFog,dusk*.6).lerp(this.nightFog,this.night);fog.density=.00010+this.night*.000065;
-    this.sky.visible=this.night<.85;this.scene.background=this.night>=.85?new T.Color(0x0e1b31):null;
-    const u=this.water.material.uniforms;u.time.value=time;u.night.value=this.night;u.sunDirection.value.copy(dir);u.sunColor.value.copy(this.sun.color);u.skyColor.value.copy(fog.color);u.deepColor.value.set(0x125e69).lerp(new T.Color(0x081d2d),this.night);
+    this.sky.visible=this.night<.85;this.scene.background=this.night>=.85?this.nightBackground:null;this.illuminate(time,focus);
+    const u=this.water.material.uniforms;u.time.value=time;u.night.value=this.night;u.sunDirection.value.copy(dir);u.sunColor.value.copy(this.sun.color);u.skyColor.value.copy(fog.color);u.deepColor.value.set(0x125e69).lerp(this.nightWater,this.night);
   }
-  dispose(){this.water.geometry.dispose();this.water.material.dispose();this.sky.geometry.dispose();this.sky.material.dispose();this.environment.dispose();this.sun.shadow.map?.dispose();}
+  dispose(){for(const slot of this.lampSlots)slot.light.removeFromParent();this.lampSlots.length=0;this.water.geometry.dispose();this.water.material.dispose();this.sky.geometry.dispose();this.sky.material.dispose();this.environment.dispose();this.sun.shadow.map?.dispose();}
 }
