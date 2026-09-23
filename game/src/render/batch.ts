@@ -24,6 +24,7 @@ export class Batch {
   private bins=new Map<string,Instance[]>();
   private objects:T.InstancedMesh[]=[];
   private transform=new T.Object3D();
+  private disposed=false;
   constructor(readonly primitives:Primitives,readonly materials:Materials,readonly originX:number,readonly originZ:number){this.group.position.set(originX,0,originZ);}
   add(shape:keyof Primitives,material:string,x:number,y:number,z:number,sx:number,sy:number,sz:number,color:T.ColorRepresentation=0xffffff,ry=0,rx=0,rz=0){
     const key=String(shape)+'|'+material;if(!this.bins.has(key))this.bins.set(key,[]);
@@ -40,5 +41,11 @@ export class Batch {
     }
     this.bins.clear();return this.group;
   }
-  dispose(){for(const m of this.objects)m.dispose();this.group.removeFromParent();this.group.clear();}
+  dispose(){
+    if(this.disposed)return;this.disposed=true;
+    // Sign planes are chunk-owned; instanced meshes borrow shared primitive geometry.
+    this.group.traverse(object=>{if(object instanceof T.Mesh&&!(object instanceof T.InstancedMesh))object.geometry.dispose();});
+    for(const mesh of this.objects)mesh.dispose();
+    this.group.removeFromParent();this.group.clear();this.objects.length=0;this.bins.clear();
+  }
 }

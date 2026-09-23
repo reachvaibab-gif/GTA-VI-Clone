@@ -14,28 +14,26 @@ export class CharacterLibrary {
 }
 export class CharacterView {
   readonly root=new T.Group();
-  private model:T.Object3D;
-  private mixer?:T.AnimationMixer;
-  private actions=new Map<string,T.AnimationAction>();
-  private action?:T.AnimationAction;
-  private limbs:T.Group[]=[];
-  private phase=0;
+  private model:T.Object3D;private mixer?:T.AnimationMixer;
+  private actions=new Map<string,T.AnimationAction>();private action?:T.AnimationAction;
+  private limbs:T.Group[]=[];private phase=0;private disposed=false;
+  private ownedGeometry:T.BufferGeometry[]=[];private ownedMaterials:T.Material[]=[];
   constructor(template:GLTF|undefined,materials:Materials,variant:number){
     if(template){
       this.model=clone(template.scene);this.root.add(this.model);
-      const box=new T.Box3().setFromObject(this.model),size=box.getSize(new T.Vector3());
-      const scale=1.78/Math.max(.1,size.y);this.model.scale.setScalar(scale);this.model.position.y=-box.min.y*scale;
+      const box=new T.Box3().setFromObject(this.model),size=box.getSize(new T.Vector3()),scale=1.78/Math.max(.1,size.y);
+      this.model.scale.setScalar(scale);this.model.position.y=-box.min.y*scale;
       this.model.traverse(o=>{if(o instanceof T.Mesh){o.castShadow=true;o.receiveShadow=true;}});
       this.mixer=new T.AnimationMixer(this.model);
-      const pick=(words:string[])=>template.animations.find(c=>words.some(w=>c.name.toLowerCase().includes(w)));
-      for(const [state,words] of [['idle',['idle']],['walk',['walking','walk']],['run',['running','run']],['jump',['jump']]] as [string,string[]][]){
-        const clip=pick(words);if(clip)this.actions.set(state,this.mixer.clipAction(clip));
+      const pick=(names:string[])=>names.map(name=>template.animations.find(c=>c.name.toLowerCase()===name)).find(Boolean);
+      for(const [state,names]of [['idle',['idle_neutral','idle']],['walk',['walk','walking']],['run',['run','running']],['jump',['jump']]] as [string,string[]][]){
+        const clip=pick(names);if(clip)this.actions.set(state,this.mixer.clipAction(clip));
       }
       if(!this.actions.size&&template.animations[0])this.actions.set('idle',this.mixer.clipAction(template.animations[0]));
     }else{
       this.model=new T.Group();this.root.add(this.model);
-      const shirt=materials.values.paint.clone();shirt.color.set([0xa6b9b3,0xb88269,0x42777b,0xd2b9a0][variant%4]);shirt.metalness=0;shirt.roughness=1;
-      const mesh=(geo:T.BufferGeometry,mat:T.Material,x:number,y:number,z:number,parent:T.Object3D=this.model)=>{const m=new T.Mesh(geo,mat);m.position.set(x,y,z);m.castShadow=true;parent.add(m);return m;};
+      const shirt=materials.values.paint.clone();this.ownedMaterials.push(shirt);shirt.color.set([0xa6b9b3,0xb88269,0x42777b,0xd2b9a0][variant%4]);shirt.metalness=0;shirt.roughness=1;
+      const mesh=(geo:T.BufferGeometry,mat:T.Material,x:number,y:number,z:number,parent:T.Object3D=this.model)=>{this.ownedGeometry.push(geo);const m=new T.Mesh(geo,mat);m.position.set(x,y,z);m.castShadow=true;parent.add(m);return m;};
       mesh(new T.CapsuleGeometry(.24,.37,6,12),shirt,0,1.12,0);
       mesh(new T.SphereGeometry(.16,16,12),materials.values.skin,0,1.62,0);
       mesh(new T.SphereGeometry(.164,12,8,0,Math.PI*2,0,Math.PI*.52),materials.values.dark,0,1.68,0);
@@ -55,5 +53,10 @@ export class CharacterView {
     this.mixer?.update(dt);
     this.limbs.forEach((limb,i)=>{limb.rotation.x=Math.sin(this.phase+(i<2?0:Math.PI)+(i%2?Math.PI:0))*Math.min(.7,speed*.14);});
   }
-  dispose(){this.mixer?.stopAllAction();if(this.mixer)this.mixer.uncacheRoot(this.model);this.root.removeFromParent();}
+  dispose(){
+    if(this.disposed)return;this.disposed=true;this.mixer?.stopAllAction();if(this.mixer)this.mixer.uncacheRoot(this.model);
+    // Imported mesh geometry/materials belong to the library, but cloned skeleton GPU textures do not.
+    const skeletons=new Set<T.Skeleton>();this.model.traverse(o=>{if(o instanceof T.SkinnedMesh)skeletons.add(o.skeleton);});for(const skeleton of skeletons)skeleton.dispose();
+    for(const geometry of this.ownedGeometry)geometry.dispose();for(const material of this.ownedMaterials)material.dispose();this.root.removeFromParent();this.root.clear();
+  }
 }
