@@ -3,12 +3,15 @@
   "checks": [
     "Real renderer, reference data and physics initialized",
     "Enter nearby vehicle through keyboard input",
-    "Throttle moves the dynamic vehicle in the correct direction"
+    "Throttle moves the dynamic vehicle in the correct direction",
+    "Safe vehicle exit",
+    "Collision-aware character walking"
   ],
   "errors": [],
   "warnings": [
     "using deprecated parameters for the initialization function; pass a single object instead",
-    "THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported."
+    "THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported.",
+    "WebGL: CONTEXT_LOST_WEBGL: loseContext: context lost"
   ],
   "snapshots": [
     {
@@ -61,8 +64,8 @@
         "calls": 182,
         "triangles": 390112,
         "geometries": 92,
-        "textures": 21,
-        "frameMs": 33.523904719368694
+        "textures": 27,
+        "frameMs": 33.03518164847499
       }
     },
     {
@@ -117,8 +120,8 @@
         "calls": 335,
         "triangles": 390434,
         "geometries": 240,
-        "textures": 63,
-        "frameMs": 90.253835314441
+        "textures": 69,
+        "frameMs": 91.53481158375648
       }
     }
   ],
@@ -127,17 +130,75 @@
       "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 119098
+      "bytes": 156816
     },
     "driving": {
       "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 170709
+      "bytes": 182803
     }
   },
-  "startedAt": "2026-09-23T02:01:03.698Z",
+  "startedAt": "2026-09-23T02:03:38.389Z",
   "browser": "140.0.7339.16",
   "headed": true,
+  "failure": "AssertionError [ERR_ASSERTION]: Rendered frame must not be blank\n    at shot (file:///home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:22:49)\n    at async file:///home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:50:240",
+  "failureSnapshot": {
+    "ready": true,
+    "started": true,
+    "paused": true,
+    "photo": false,
+    "actor": {
+      "x": 1992.6968994140625,
+      "y": 3.2300330543518068,
+      "z": -465.0688171386719,
+      "yaw": 3.1420927383466237,
+      "speed": 0.8466907404363155,
+      "driving": false,
+      "health": 100,
+      "grounded": true
+    },
+    "car": {
+      "x": 1995,
+      "y": 3.7589361667633057,
+      "z": -462.83294677734375,
+      "health": 100
+    },
+    "progress": {
+      "version": 1,
+      "money": 0,
+      "completed": [],
+      "bestTimes": {},
+      "discovered": [
+        "Ocean Beach"
+      ],
+      "mission": null,
+      "heat": 0,
+      "unseen": 6.16666666666665,
+      "playSeconds": 6.16666666666665
+    },
+    "world": {
+      "chunks": 9,
+      "pending": 0,
+      "detailedChunks": 0,
+      "colliders": 727
+    },
+    "assets": {
+      "characters": 2,
+      "landmarks": 2716
+    },
+    "traffic": {
+      "cars": 6,
+      "pedestrians": 10
+    },
+    "render": {
+      "calls": 315,
+      "triangles": 360946,
+      "geometries": 240,
+      "textures": 81,
+      "frameMs": 114.68271498465971
+    }
+  },
+  "finishedAt": "2026-09-23T02:04:58.866Z",
   "serverLog": "  \u001b[32m➜\u001b[39m  \u001b[1mLocal\u001b[22m:   \u001b[36mhttp://127.0.0.1:\u001b[1m4173\u001b[22m/\u001b[39m\n"
 }
