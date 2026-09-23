@@ -1,9 +1,7 @@
 {
-  "phase": "drive",
+  "phase": "load production game",
   "checks": [
-    "Real renderer, reference data and physics initialized",
-    "Enter nearby vehicle through keyboard input",
-    "Throttle moves the dynamic vehicle in the correct direction"
+    "Real renderer, reference data and physics initialized"
   ],
   "errors": [],
   "warnings": [
@@ -61,76 +59,14 @@
         "triangles": 291760,
         "geometries": 92,
         "textures": 20,
-        "frameMs": 47.770989304653334
+        "frameMs": 47.772302924341304
       }
     }
   ],
-  "captures": {
-    "menu": {
-      "source": "Actual WebGL canvas readback, without DOM overlay",
-      "width": 1280,
-      "height": 800,
-      "bytes": 116361
-    }
-  },
-  "startedAt": "2026-09-23T01:00:01.496Z",
+  "captures": {},
+  "startedAt": "2026-09-23T01:08:15.827Z",
   "browser": "140.0.7339.16",
-  "failure": "Error: WebGL frame readback exceeded 20000ms\n    at Timeout._onTimeout (file:///home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:12:100)\n    at listOnTimeout (node:internal/timers:585:17)\n    at process.processTimers (node:internal/timers:521:7)",
-  "failureSnapshot": {
-    "ready": true,
-    "started": true,
-    "paused": false,
-    "photo": false,
-    "actor": {
-      "x": 1998,
-      "y": 3.2088832378387453,
-      "z": -452.5164794921875,
-      "yaw": 3.141592653589793,
-      "speed": 13.51678466796875,
-      "driving": true,
-      "health": 100,
-      "grounded": true
-    },
-    "car": {
-      "x": 1998,
-      "y": 3.758883237838745,
-      "z": -452.5164794921875,
-      "health": 100
-    },
-    "progress": {
-      "version": 1,
-      "money": 0,
-      "completed": [],
-      "bestTimes": {},
-      "discovered": [
-        "Ocean Beach"
-      ],
-      "mission": null,
-      "heat": 0,
-      "unseen": 3.433333333333326,
-      "playSeconds": 3.433333333333326
-    },
-    "world": {
-      "chunks": 9,
-      "pending": 0,
-      "colliders": 727
-    },
-    "assets": {
-      "characters": 2,
-      "landmarks": 2716
-    },
-    "traffic": {
-      "cars": 6,
-      "pedestrians": 10
-    },
-    "render": {
-      "calls": 319,
-      "triangles": 275140,
-      "geometries": 380,
-      "textures": 76,
-      "frameMs": 118.48477055633181
-    }
-  },
-  "finishedAt": "2026-09-23T01:01:33.769Z",
+  "headed": true,
+  "failure": "Error: WebGL frame readback exceeded 30000ms\n    at Timeout._onTimeout (file:///home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:12:100)\n    at listOnTimeout (node:internal/timers:585:17)\n    at process.processTimers (node:internal/timers:521:7)",
   "serverLog": "  \u001b[32m➜\u001b[39m  \u001b[1mLocal\u001b[22m:   \u001b[36mhttp://127.0.0.1:\u001b[1m4173\u001b[22m/\u001b[39m\n"
 }

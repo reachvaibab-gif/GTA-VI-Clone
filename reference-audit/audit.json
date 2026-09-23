@@ -251,5 +251,174 @@
     "maxX": 3147.429940123222,
     "minY": -8000,
     "maxY": 8896.53
+  },
+  "mapCalibration": {
+    "status": "validated-against-annotation-marks",
+    "source": "maps/leonida_yanis-16_z3.jpg",
+    "annotated": "maps/leonida_landmarks_annotated_z3.jpg",
+    "zoom": 3,
+    "metresPerPixel": 4,
+    "method": "Known source scale plus integer-tile registration against independently drawn landmark annotations. No terrain height is inferred from this image.",
+    "sampleCount": 2132,
+    "bestToRunnerUpRatio": 2.79970975680912,
+    "candidates": [
+      {
+        "originTileX": 5,
+        "originTileY": 5,
+        "meanDifference": 175.54784240150093,
+        "medianDifference": 184,
+        "annotationHitRate": 0.9971857410881801,
+        "insideRate": 1
+      },
+      {
+        "originTileX": 5,
+        "originTileY": 4,
+        "meanDifference": 62.70215759849906,
+        "medianDifference": 4,
+        "annotationHitRate": 0.30863039399624764,
+        "insideRate": 1
+      },
+      {
+        "originTileX": 5,
+        "originTileY": 6,
+        "meanDifference": 61.93996247654784,
+        "medianDifference": 4,
+        "annotationHitRate": 0.30112570356472795,
+        "insideRate": 1
+      },
+      {
+        "originTileX": 4,
+        "originTileY": 6,
+        "meanDifference": 48.815196998123824,
+        "medianDifference": 2,
+        "annotationHitRate": 0.24108818011257035,
+        "insideRate": 1
+      },
+      {
+        "originTileX": 6,
+        "originTileY": 4,
+        "meanDifference": 47.80909943714822,
+        "medianDifference": 3,
+        "annotationHitRate": 0.23639774859287055,
+        "insideRate": 1
+      },
+      {
+        "originTileX": 5,
+        "originTileY": 3,
+        "meanDifference": 40.48358348968105,
+        "medianDifference": 2,
+        "annotationHitRate": 0.19699812382739212,
+        "insideRate": 0.9948405253283302
+      },
+      {
+        "originTileX": 5,
+        "originTileY": 7,
+        "meanDifference": 40.19606003752345,
+        "medianDifference": 2,
+        "annotationHitRate": 0.1946529080675422,
+        "insideRate": 1
+      },
+      {
+        "originTileX": 6,
+        "originTileY": 5,
+        "meanDifference": 38.77579737335835,
+        "medianDifference": 2,
+        "annotationHitRate": 0.18667917448405252,
+        "insideRate": 1
+      }
+    ],
+    "transform": {
+      "originTileX": 5,
+      "originTileY": 5,
+      "scale": 0.25,
+      "offsetX": 2816,
+      "offsetZ": 2816
+    },
+    "examples": [
+      {
+        "id": "L1",
+        "x": 1409.40126306379,
+        "z": -2803.2135475894142,
+        "pixelX": 3168.350315765948,
+        "pixelY": 2115.1966131026466
+      },
+      {
+        "id": "L2",
+        "x": 1491.644642010651,
+        "z": -2633.3023385608108,
+        "pixelX": 3188.911160502663,
+        "pixelY": 2157.6744153597974
+      },
+      {
+        "id": "L3",
+        "x": 1541.925,
+        "z": -2562.866,
+        "pixelX": 3201.48125,
+        "pixelY": 2175.2835
+      },
+      {
+        "id": "L4",
+        "x": 1626.759997019858,
+        "z": -2512.7550249217966,
+        "pixelX": 3222.6899992549643,
+        "pixelY": 2187.811243769551
+      },
+      {
+        "id": "L5",
+        "x": 1673.9352770143546,
+        "z": -2402.7617365126403,
+        "pixelX": 3234.483819253589,
+        "pixelY": 2215.30956587184
+      },
+      {
+        "id": "L6",
+        "x": 1720.9472792155304,
+        "z": -2199.0019649925734,
+        "pixelX": 3246.236819803883,
+        "pixelY": 2266.2495087518564
+      },
+      {
+        "id": "L7",
+        "x": 1771.6250105104211,
+        "z": -2167.415798523127,
+        "pixelX": 3258.9062526276057,
+        "pixelY": 2274.1460503692183
+      },
+      {
+        "id": "L8",
+        "x": 1808.2404872498184,
+        "z": -2127.7063926732812,
+        "pixelX": 3268.060121812455,
+        "pixelY": 2284.07340183168
+      },
+      {
+        "id": "L9",
+        "x": 1871.8848643739557,
+        "z": -2057.0075774474344,
+        "pixelX": 3283.9712160934887,
+        "pixelY": 2301.748105638141
+      },
+      {
+        "id": "L10",
+        "x": 1890.3918876840426,
+        "z": -1932.4861301214287,
+        "pixelX": 3288.597971921011,
+        "pixelY": 2332.8784674696426
+      },
+      {
+        "id": "L11",
+        "x": 1979.4552215394265,
+        "z": -1926.5420522539341,
+        "pixelX": 3310.8638053848563,
+        "pixelY": 2334.3644869365166
+      },
+      {
+        "id": "L12",
+        "x": 1874.2259557548418,
+        "z": -1799.3720065000448,
+        "pixelX": 3284.5564889387106,
+        "pixelY": 2366.1569983749887
+      }
+    ]
   }
 }
