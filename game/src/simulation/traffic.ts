@@ -5,30 +5,33 @@ import { Materials } from '../render/materials';
 import { CharacterLibrary,CharacterView } from '../render/characters';
 import { SEGMENTS,surfaceHeight,nearestRoad } from '../world/layout.mjs';
 import { rng,angleDelta,pointSegment } from '../core/math.mjs';
+import { createTrafficNetwork,lanePoint,chooseNextRoad,trafficGuidance,followControls,type DirectedRoad } from './traffic-routing.mjs';
 import type { ActorState } from '../types';
-type TrafficCar={car:Vehicle;segment:number;direction:number;target:number};
+const network=createTrafficNetwork(SEGMENTS);
+type TrafficCar=DirectedRoad & {car:Vehicle;next:DirectedRoad|null};
 type Walker={view:CharacterView;x:number;z:number;yaw:number;segment:number;t:number;direction:number;speed:number};
 export class Traffic {
   readonly cars:TrafficCar[]=[];readonly walkers:Walker[]=[];
   private random=rng(46006);private accumulator=0;private serial=0;
   constructor(readonly scene:T.Scene,readonly physics:RAPIER.World,readonly materials:Materials,readonly characters:CharacterLibrary){}
   private spawnCar(actor:ActorState,forcePolice=false){
-    // Project onto nearby segments rather than sampling their distant endpoints.
-    const nearby=SEGMENTS.map((s,i)=>({s,i,hit:pointSegment(actor.x,actor.z,...s.a,...s.b)})).filter(({hit})=>hit.distance<260);
+    const nearby=network.segments.map((s,i)=>({s,i,hit:pointSegment(actor.x,actor.z,...s.a,...s.b)})).filter(({hit,s})=>hit.distance<260&&s.length>18);
     if(!nearby.length)return;
     const {s,i,hit}=nearby[Math.floor(this.random()*nearby.length)],direction=this.random()>.5?1:-1;
-    const t=Math.max(.025,Math.min(.975,hit.t+(this.random()>.5?1:-1)*(75+this.random()*100)/s.length));
-    const x=s.a[0]+(s.b[0]-s.a[0])*t-Math.cos(s.yaw)*direction*s.width*.24,z=s.a[1]+(s.b[1]-s.a[1])*t+Math.sin(s.yaw)*direction*s.width*.24;
-    const distance=Math.hypot(x-actor.x,z-actor.z);
+    const t=Math.max(.08,Math.min(.92,hit.t+(this.random()>.5?1:-1)*(75+this.random()*100)/s.length));
+    const {x,z}=lanePoint(s,t,direction),distance=Math.hypot(x-actor.x,z-actor.z);
     if(distance<35||distance>300||this.cars.some(v=>Math.hypot(v.car.position.x-x,v.car.position.z-z)<12))return;
     const index=this.serial++,police=forcePolice||index%6===5;
     const color=police?0xe7e5dc:[0x58787b,0xad624b,0xd3ccad,0x27353e,0x7b8776,0xc5b7b2][index%6];
     const car=new Vehicle(this.physics,this.scene,this.materials,x,z,s.yaw+(direction<0?Math.PI:0),color,police);
-    this.cars.push({car,segment:i,direction,target:direction>0?1:0});
+    const route={segment:i,direction};
+    this.cars.push({...route,car,next:chooseNextRoad(network,route,this.random())});
   }
   private spawnWalker(actor:ActorState,index:number){
     const hit=nearestRoad(actor.x+(this.random()-.5)*180,actor.z+(this.random()-.5)*180);if(!hit||hit.segment.kind!=='urban')return;
+    // Walkers retain source-road indices: vehicle topology is split independently.
     const s=hit.segment,segment=SEGMENTS.findIndex(v=>v.id===s.id),direction=this.random()>.5?1:-1;
+    if(segment<0)return;
     const x=hit.x-Math.cos(s.yaw)*(s.width/2+2.4),z=hit.z+Math.sin(s.yaw)*(s.width/2+2.4);
     const view=this.characters.make(index);this.scene.add(view.root);this.walkers.push({view,x,z,segment,t:hit.t,direction,yaw:s.yaw+(direction<0?Math.PI:0),speed:.85+this.random()*.6});
   }
@@ -45,30 +48,34 @@ export class Traffic {
     let seen=false;
     for(const e of this.cars){
       if(e.car.controlled)continue;
-      const p=e.car.position,s=SEGMENTS[e.segment],point=e.target?s.b:s.a;
-      let tx=point[0]-Math.cos(s.yaw)*e.direction*s.width*.24,tz=point[1]+Math.sin(s.yaw)*e.direction*s.width*.24;
-      let speed=e.car.police&&heat>0?22:s.kind==='highway'?24:12;
+      const p=e.car.position;
+      let guidance=trafficGuidance(network,e,e.next,p,e.car.speed);
+      if(!guidance)continue;
+      if(guidance.advance&&e.next){
+        e.segment=e.next.segment;e.direction=e.next.direction;e.next=chooseNextRoad(network,e,this.random());
+        guidance=trafficGuidance(network,e,e.next,p,e.car.speed)!;
+      }
+      let tx=guidance.x,tz=guidance.z,speed=guidance.targetSpeed;
       if(e.car.police&&heat>0){
         const distance=Math.hypot(p.x-actor.x,p.z-actor.z);
         if(distance<170){
-          tx=actor.x;tz=actor.z;
           const dir={x:(actor.x-p.x)/Math.max(1,distance),y:0,z:(actor.z-p.z)/Math.max(1,distance)};
           const hit=this.physics.castRay(new RAPIER.Ray({x:p.x,y:p.y+.6,z:p.z},dir),Math.max(0,distance-3),true,undefined,undefined,e.car.collider);
-          if(!hit)seen=true;
+          if(!hit){seen=true;tx=actor.x;tz=actor.z;speed=distance<12?7:22;}
         }
       }
       for(const other of this.cars){
         if(other===e)continue;const op=other.car.position,dx=op.x-p.x,dz=op.z-p.z,forward=dx*Math.sin(e.car.yaw)+dz*Math.cos(e.car.yaw),side=Math.abs(dx*Math.cos(e.car.yaw)-dz*Math.sin(e.car.yaw));
-        if(forward>0&&forward<15&&side<2.6)speed=Math.min(speed,Math.max(0,(forward-5)*1.4));
+        if(forward>0&&forward<25&&side<2.6)speed=Math.min(speed,Math.max(0,(forward-6)*1.15));
       }
-      if(Math.hypot(tx-p.x,tz-p.z)<13){
-        const junction=point;
-        const choices=SEGMENTS.map((next,i)=>({next,i})).filter(({next,i})=>i!==e.segment&&(
-          Math.hypot(next.a[0]-junction[0],next.a[1]-junction[1])<1||Math.hypot(next.b[0]-junction[0],next.b[1]-junction[1])<1));
-        if(choices.length){const c=choices[Math.floor(this.random()*choices.length)];e.segment=c.i;e.direction=Math.hypot(c.next.a[0]-junction[0],c.next.a[1]-junction[1])<1?1:-1;e.target=e.direction>0?1:0;}
-        else{e.direction*=-1;e.target=1-e.target;}
-      }
-      e.car.follow(dt,tx,tz,speed);
+      // Query the physics world as well, so the player's car and walls are not invisible to AI.
+      const yaw=e.car.yaw,look=Math.max(12,Math.min(55,e.car.speed*e.car.speed/8+10));
+      const obstacle=this.physics.castRay(new RAPIER.Ray({x:p.x,y:p.y+.25,z:p.z},{x:Math.sin(yaw),y:0,z:Math.cos(yaw)}),look,true,undefined,undefined,e.car.collider);
+      if(obstacle)speed=Math.min(speed,Math.sqrt(8*Math.max(0,obstacle.timeOfImpact-5.5)));
+      const error=angleDelta(yaw,Math.atan2(tx-p.x,tz-p.z));
+      speed=Math.min(speed,Math.max(3,15/(1+Math.abs(error)*2)));
+      const controls=followControls(e.car.speed,speed,error);
+      e.car.drive(dt,controls.throttle,controls.steering,controls.handbrake);
     }
     for(const w of this.walkers){
       const s=SEGMENTS[w.segment];w.t+=w.direction*w.speed*dt/s.length;
