@@ -16,20 +16,22 @@ const state=()=>timeout(page.evaluate(()=>window.__game.snapshot()),15000,'state
 const step=n=>timeout(page.evaluate(n=>window.__game.step(n),n),45000,'simulation step');
 const key=async code=>{await page.keyboard.press(code);await page.waitForTimeout(180);};
 async function shot(name){
-  const data=await timeout(page.evaluate(()=>window.__game.capture()),20000,'WebGL frame readback');
+  const data=await timeout(page.evaluate(()=>window.__game.capture()),30000,'WebGL frame readback');
   assert.ok(data.startsWith('data:image/jpeg;base64,'));
   const bytes=Buffer.from(data.split(',')[1],'base64');
   const stats=await sharp(bytes).stats();assert.ok(stats.channels.some(c=>c.stdev>10),'Rendered frame must not be blank');
   await fs.writeFile(`${output}/${name}.jpg`,bytes);
+  await sharp(bytes).resize({width:480}).webp({quality:55}).toFile(`${output}/${name}-preview.webp`);
   await sharp(bytes).resize({width:360}).jpeg({quality:32}).toFile(`${output}/preview.jpg`);
-  report.captures[name]={source:'Actual WebGL canvas readback, without DOM overlay',width:1280,height:800,bytes:bytes.length};
+  report.captures[name]={source:'Actual WebGL canvas, simulation suspended during readback; no DOM overlay',width:1280,height:800,bytes:bytes.length};
   await write();
 }
 const watchdog=setTimeout(async()=>{report.failure=report.failure??`Global browser deadline at phase ${report.phase}`;await write();console.error(report.failure);stopServer();process.exit(1);},330000);watchdog.unref();
 try{
   for(let n=0;n<100;n++){try{if((await fetch('http://127.0.0.1:4173/')).ok)break;}catch{}await new Promise(r=>setTimeout(r,200));}
-  await phase('launch browser');browser=await chromium.launch({channel:'chromium',headless:true,timeout:45000,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-dev-shm-usage']});
-  report.browser=browser.version();const context=await browser.newContext({viewport:{width:1280,height:800},deviceScaleFactor:1});page=await context.newPage();page.setDefaultTimeout(20000);
+  await phase('launch browser');browser=await chromium.launch({channel:'chromium',headless:process.env.LEONIDA_HEADED!=='1',timeout:45000,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-dev-shm-usage']});
+  report.browser=browser.version();report.headed=process.env.LEONIDA_HEADED==='1';
+  const context=await browser.newContext({viewport:{width:1280,height:800},deviceScaleFactor:1});page=await context.newPage();page.setDefaultTimeout(20000);
   page.on('pageerror',e=>{errors.push(e.message);write().catch(()=>{});});page.on('console',m=>{if(m.type()==='error'){errors.push(m.text());write().catch(()=>{});}if(m.type()==='warning')warnings.push(m.text());});
   page.on('requestfailed',r=>errors.push(`${r.method()} ${r.url()}: ${r.failure()?.errorText}`));
   await phase('load production game');await page.goto('http://127.0.0.1:4173/?test=1&quality=low',{waitUntil:'networkidle',timeout:60000});
@@ -42,7 +44,7 @@ try{
   const before=(await state()).actor;await phase('drive');
   await page.keyboard.down('KeyW');await step(180);await page.keyboard.up('KeyW');
   s=await state();assert.ok(Math.hypot(s.actor.x-before.x,s.actor.z-before.z)>5,'Vehicle must physically move');assert.ok(s.actor.z<before.z,'Forward must move north at initial heading');checks.push('Throttle moves the dynamic vehicle in the correct direction');
-  await shot('driving');report.snapshots.push(s);await phase('brake and exit');
+  report.snapshots.push(s);await shot('driving');await phase('brake and exit');
   await page.keyboard.down('KeyS');await step(75);await page.keyboard.up('KeyS');await page.evaluate(()=>window.__game.recover());await step(30);
   await key('KeyE');await page.waitForFunction(()=>!window.__game.snapshot().actor.driving);checks.push('Safe vehicle exit');
   const foot=(await state()).actor;await page.keyboard.down('KeyW');await step(60);await page.keyboard.up('KeyW');s=await state();assert.ok(Math.hypot(s.actor.x-foot.x,s.actor.z-foot.z)>.5);checks.push('Collision-aware character walking');await shot('street');

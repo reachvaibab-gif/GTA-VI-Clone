@@ -34,11 +34,15 @@ jobs:
         run: npm run assets
       - name: Typecheck and production build
         run: npm run build
-      - name: Install headless browser
-        run: npx playwright install --with-deps chromium
+      - name: Install desktop browser
+        run: |
+          npx playwright install --with-deps chromium
+          command -v xvfb-run || (sudo apt-get update && sudo apt-get install -y xvfb)
       - name: Browser tests
         timeout-minutes: 7
-        run: npm run test:browser
+        env:
+          LEONIDA_HEADED: '1'
+        run: xvfb-run -a npm run test:browser
       - name: Save bounded evidence in private repository
         if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
