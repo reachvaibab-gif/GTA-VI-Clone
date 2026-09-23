@@ -1,0 +1,59 @@
+name: Build and browser verification
+on:
+  push:
+    branches: [main]
+    paths: ['game/**', '.github/workflows/verify.yml']
+  pull_request:
+    paths: ['game/**', '.github/workflows/verify.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: game
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned dependencies
+        run: npm install --no-audit --no-fund
+      - name: Unit tests
+        run: npm test
+      - name: Inspect reference library
+        run: node scripts/audit-references.mjs
+      - name: Prepare runtime assets
+        if: hashFiles('game/scripts/prepare-assets.mjs') != ''
+        run: npm run assets
+      - name: Typecheck and production build
+        if: hashFiles('game/index.html') != ''
+        run: npm run build
+      - name: Browser tests
+        if: hashFiles('game/scripts/playtest.mjs') != ''
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:browser
+      - name: Archive verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-evidence
+          path: |
+            game/artifacts/
+            game/package-lock.json
+            game/dist/
+          retention-days: 7
+      - name: Offline development dependencies
+        if: hashFiles('game/index.html') == ''
+        run: tar -czf artifacts/dependencies.tar.gz node_modules package-lock.json
+      - name: Archive development dependencies
+        if: hashFiles('game/index.html') == ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: development-dependencies
+          path: game/artifacts/dependencies.tar.gz
+          retention-days: 1

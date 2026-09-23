@@ -1,0 +1,8 @@
+node_modules/
+dist/
+artifacts/
+public/generated/
+public/assets/
+.env
+.env.*
+!.env.example
