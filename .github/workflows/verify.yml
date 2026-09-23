@@ -10,11 +10,11 @@ permissions:
   contents: write
 concurrency:
   group: verify-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 12
     defaults:
       run:
         working-directory: game
@@ -24,35 +24,23 @@ jobs:
         with:
           node-version: '22'
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: |
+          if [ -f package-lock.json ]; then npm ci --no-audit --no-fund; else npm install --no-audit --no-fund; fi
       - name: Unit tests
         run: npm test
       - name: Inspect reference library
         run: node scripts/audit-references.mjs
       - name: Prepare runtime assets
-        if: hashFiles('game/scripts/prepare-assets.mjs') != ''
         run: npm run assets
       - name: Typecheck and production build
-        if: hashFiles('game/index.html') != ''
         run: npm run build
+      - name: Install headless browser
+        run: npx playwright install --with-deps chromium
       - name: Browser tests
-        if: hashFiles('game/scripts/playtest.mjs') != ''
-        run: |
-          npx playwright install --with-deps chromium
-          npm run test:browser
+        timeout-minutes: 7
+        run: npm run test:browser
       - name: Save bounded evidence in private repository
         if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/publish-evidence.mjs
-      - name: Archive downloadable build when storage is available
-        if: always()
-        continue-on-error: true
-        uses: actions/upload-artifact@v4
-        with:
-          name: verification-evidence
-          path: |
-            game/artifacts/
-            game/package-lock.json
-            game/dist/
-          retention-days: 1
