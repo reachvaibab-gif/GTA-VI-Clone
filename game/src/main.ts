@@ -11,11 +11,18 @@ async function boot(){
     snapshot:()=>game.snapshot(),step:(n:number)=>game.debugStep(n),view:(...args:[number,number,number,number,number,number])=>game.debugView(...args),
     setTime:(n:number)=>game.applySettings({time:n}),recover:()=>game.recover(),save:()=>game.save(),
     capture:async()=>{
-      // Freeze the actual scene while transferring its pixels. Pointer lock is not needed for a still
-      // and can stall Chromium's software compositor. No actors, materials or geometry are replaced.
-      const wasPaused=game.paused;game.paused=true;game.input.unlock();
+      const wasPaused=game.paused;game.paused=true;
       try{
-        await new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve())));
+        if(document.pointerLockElement){
+          // Finish the unlock event before restoring simulation. Never depend on compositor RAFs:
+          // those can be suspended independently of a working WebGL context in software-rendered CI.
+          await new Promise<void>(resolve=>{
+            let timer:ReturnType<typeof setTimeout>;
+            const done=()=>{clearTimeout(timer);document.removeEventListener('pointerlockchange',done);resolve();};
+            document.addEventListener('pointerlockchange',done,{once:true});timer=setTimeout(done,150);game.input.unlock();
+          });
+        }
+        // Readback synchronizes this exact real scene render; no geometry or materials are substituted.
         game.renderer.render(game.scene,game.camera);
         return game.canvas.toDataURL('image/jpeg',.9);
       }finally{game.paused=wasPaused;}
