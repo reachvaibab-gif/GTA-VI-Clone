@@ -14,7 +14,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: game
@@ -32,6 +32,17 @@ jobs:
         run: node scripts/audit-references.mjs
       - name: Prepare runtime assets
         run: npm run assets
+      - name: Package reproducible verification workspace
+        working-directory: .
+        run: tar -czf "$RUNNER_TEMP/leonida-workspace.tgz" --exclude='game/node_modules/.cache' --exclude='game/evidence' --exclude='game/dist' game
+      - name: Retain verification workspace
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-workspace-${{ github.sha }}
+          path: ${{ runner.temp }}/leonida-workspace.tgz
+          retention-days: 3
+          compression-level: 0
+          if-no-files-found: error
       - name: Typecheck and production build
         run: npm run build
       - name: Install desktop browser
