@@ -4,23 +4,31 @@ import fs from 'node:fs/promises';
 import sharp from 'sharp';
 import assert from 'node:assert/strict';
 const output='artifacts/playtest';await fs.mkdir(output,{recursive:true});
-// Launch Vite directly: killing an npm wrapper can leave a grandchild holding the output pipes open.
 const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','preview','--host','127.0.0.1','--port','4173'],{stdio:['ignore','pipe','pipe'],env:process.env});
 let serverLog='';server.stdout.on('data',d=>serverLog+=d);server.stderr.on('data',d=>serverLog+=d);
 const errors=[],warnings=[],checks=[];let browser,page;
-const report={phase:'server',checks,errors,warnings,snapshots:[],startedAt:new Date().toISOString()};
+const report={phase:'server',checks,errors,warnings,snapshots:[],captures:{},startedAt:new Date().toISOString()};
 const write=()=>fs.writeFile(`${output}/report.json`,JSON.stringify({...report,serverLog},null,2));
 const timeout=(p,ms,label)=>Promise.race([p,new Promise((_,reject)=>{const t=setTimeout(()=>reject(new Error(`${label} exceeded ${ms}ms`)),ms);t.unref();})]);
 function stopServer(){server.kill('SIGTERM');server.stdout.destroy();server.stderr.destroy();server.unref();}
 async function phase(name){report.phase=name;console.log(`PLAYTEST: ${name}`);await write();}
 const state=()=>timeout(page.evaluate(()=>window.__game.snapshot()),15000,'state read');
 const step=n=>timeout(page.evaluate(n=>window.__game.step(n),n),45000,'simulation step');
-const key=async code=>{await page.keyboard.press(code);await page.waitForTimeout(120);};
-const shot=async name=>{await page.screenshot({path:`${output}/${name}.jpg`,type:'jpeg',quality:84,timeout:20000});await sharp(`${output}/${name}.jpg`).resize({width:360}).jpeg({quality:32}).toFile(`${output}/preview.jpg`);};
+const key=async code=>{await page.keyboard.press(code);await page.waitForTimeout(180);};
+async function shot(name){
+  const data=await timeout(page.evaluate(()=>window.__game.capture()),20000,'WebGL frame readback');
+  assert.ok(data.startsWith('data:image/jpeg;base64,'));
+  const bytes=Buffer.from(data.split(',')[1],'base64');
+  const stats=await sharp(bytes).stats();assert.ok(stats.channels.some(c=>c.stdev>10),'Rendered frame must not be blank');
+  await fs.writeFile(`${output}/${name}.jpg`,bytes);
+  await sharp(bytes).resize({width:360}).jpeg({quality:32}).toFile(`${output}/preview.jpg`);
+  report.captures[name]={source:'Actual WebGL canvas readback, without DOM overlay',width:1280,height:800,bytes:bytes.length};
+  await write();
+}
 const watchdog=setTimeout(async()=>{report.failure=report.failure??`Global browser deadline at phase ${report.phase}`;await write();console.error(report.failure);stopServer();process.exit(1);},330000);watchdog.unref();
 try{
   for(let n=0;n<100;n++){try{if((await fetch('http://127.0.0.1:4173/')).ok)break;}catch{}await new Promise(r=>setTimeout(r,200));}
-  await phase('launch browser');browser=await chromium.launch({headless:true,timeout:45000,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-dev-shm-usage']});
+  await phase('launch browser');browser=await chromium.launch({channel:'chromium',headless:true,timeout:45000,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-dev-shm-usage']});
   report.browser=browser.version();const context=await browser.newContext({viewport:{width:1280,height:800},deviceScaleFactor:1});page=await context.newPage();page.setDefaultTimeout(20000);
   page.on('pageerror',e=>{errors.push(e.message);write().catch(()=>{});});page.on('console',m=>{if(m.type()==='error'){errors.push(m.text());write().catch(()=>{});}if(m.type()==='warning')warnings.push(m.text());});
   page.on('requestfailed',r=>errors.push(`${r.method()} ${r.url()}: ${r.failure()?.errorText}`));
@@ -51,6 +59,5 @@ try{
   report.final=await state();assert.deepEqual(errors,[],'No browser runtime, asset or shader errors');await phase('passed');
 }catch(error){report.failure=error.stack;process.exitCode=1;console.error(error);await write();if(page){await shot('failure').catch(()=>{});try{report.failureSnapshot=await state();}catch{}}}
 finally{
-  await timeout(browser?.close()??Promise.resolve(),8000,'browser shutdown').catch(()=>{});stopServer();report.finishedAt=new Date().toISOString();await write();clearTimeout(watchdog);
-  console.log(JSON.stringify(report,null,2));
+  await timeout(browser?.close()??Promise.resolve(),8000,'browser shutdown').catch(()=>{});stopServer();report.finishedAt=new Date().toISOString();await write();clearTimeout(watchdog);console.log(JSON.stringify(report,null,2));
 }

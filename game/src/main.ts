@@ -6,8 +6,18 @@ async function boot(){
   const [world,assets]=await Promise.all([json<WorldData>('generated/world.json'),json<AssetData>('generated/assets.json')]);
   if(!Array.isArray(world.landmarks)||!world.landmarks.length)throw new Error('Landmark package is empty or invalid.');
   const game=new Game(document.querySelector('#world')!,document.querySelector('#ui')!,world,assets);await game.initialize();
-  // Explicit opt-in diagnostics exercise the real game systems; absent from the normal window surface.
-  if(new URLSearchParams(location.search).has('test'))Object.assign(window,{__game:{snapshot:()=>game.snapshot(),step:(n:number)=>game.debugStep(n),view:(...args:[number,number,number,number,number,number])=>game.debugView(...args),setTime:(n:number)=>game.applySettings({time:n}),recover:()=>game.recover(),save:()=>game.save()}});
+  // Diagnostic hooks are explicit opt-in. They exercise the same scene, controls and simulation as normal play.
+  if(new URLSearchParams(location.search).has('test'))Object.assign(window,{__game:{
+    snapshot:()=>game.snapshot(),step:(n:number)=>game.debugStep(n),
+    view:(...args:[number,number,number,number,number,number])=>game.debugView(...args),
+    setTime:(n:number)=>game.applySettings({time:n}),recover:()=>game.recover(),save:()=>game.save(),
+    capture:()=>{
+      // Read the actual framebuffer immediately after drawing. This does not enable preserveDrawingBuffer
+      // for normal gameplay, and avoids headless-shell compositor stalls during continuous WebGL animation.
+      game.renderer.render(game.scene,game.camera);
+      return game.canvas.toDataURL('image/jpeg',.9);
+    }
+  }});
 }
 boot().catch(error=>{
   console.error(error);const root=document.querySelector('#ui')!;root.textContent='';const panel=document.createElement('section');panel.className='fatal';
