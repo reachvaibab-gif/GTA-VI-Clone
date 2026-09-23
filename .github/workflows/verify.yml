@@ -6,6 +6,11 @@ on:
   pull_request:
     paths: ['game/**', '.github/workflows/verify.yml']
   workflow_dispatch:
+    inputs:
+      workspace:
+        description: 'Retain a reproducible Linux verification workspace (requires artifact storage)'
+        type: boolean
+        default: false
 permissions:
   contents: write
 concurrency:
@@ -33,9 +38,12 @@ jobs:
       - name: Prepare runtime assets
         run: npm run assets
       - name: Package reproducible verification workspace
+        if: github.event_name == 'workflow_dispatch' && inputs.workspace
         working-directory: .
         run: tar -czf "$RUNNER_TEMP/leonida-workspace.tgz" --exclude='game/node_modules/.cache' --exclude='game/evidence' --exclude='game/dist' game
       - name: Retain verification workspace
+        if: github.event_name == 'workflow_dispatch' && inputs.workspace
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: verification-workspace-${{ github.sha }}
