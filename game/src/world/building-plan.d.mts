@@ -1,0 +1,2 @@
+export interface ArchitecturalPart { material:string; position:[number,number,number]; size:[number,number,number]; color:number; shape:'box'|'round'|'gable'; ry:number }
+export function planBuilding(options:{width:number;depth:number;height:number;style:'deco'|'tower'|'house'|'warehouse';seed?:number},detail?:boolean):{parts:ArchitecturalPart[];variant:number;color:number;width:number;depth:number;height:number};

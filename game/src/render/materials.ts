@@ -16,27 +16,30 @@ export class Materials {
     const add=(id:string,color:T.ColorRepresentation,roughness=.8,metalness=0,map?:T.Texture)=>{
       this.values[id]=new T.MeshStandardMaterial({color,roughness,metalness,map:map??null});if(map)this.textures.push(map);
     };
-    add('stucco',0xffffff,.93,0,texture('#d8d0bf',18,8));add('stone',0xffffff,.95,0,texture('#b9b5a7',28,9,64));
+    add('stucco',0xffffff,.93,0,texture('#ded8cd',18,8));add('stone',0xffffff,.95,0,texture('#b9b5a7',28,9,64));
     add('asphalt',0xffffff,.94,0,texture('#464a4c',30,5));add('sidewalk',0xffffff,.88,0,texture('#bdb9ad',20,4,64));
-    add('sand',0xffffff,1,0,texture('#cfb886',23,14));add('grass',0xffffff,1,0,texture('#657642',24,6));
+    add('sand',0xffffff,1,0,texture('#d6c69f',23,14));add('grass',0xffffff,1,0,texture('#788365',24,6));
     add('roof',0xffffff,.92,0,texture('#797d73',40,19,64));
-    for(const [name,size]of Object.entries({stucco:2.5,stone:3,asphalt:6,sidewalk:4,sand:3,grass:4,roof:8}))worldUV(this.values[name],size);
+    add('roofTile',0xffffff,.87,0,texture('#ae7151',28,31,32));
+    add('palmBark',0xffffff,.96,0,texture('#82725b',32,46,32));
+    for(const [name,size]of Object.entries({stucco:2.5,stone:3,asphalt:6,sidewalk:4,sand:5,grass:4,roof:8,roofTile:2,palmBark:1.3}))worldUV(this.values[name],size);
     add('trim',0xe3dccb,.72);add('dark',0x232c30,.72);add('white',0xe9e3d6,.65);
     add('metal',0x9ca5a6,.37,.78);add('rubber',0x16191b,.95);add('trunk',0x847660,.9);
     add('glass',0x45636f,.17,.68);this.values.glass.envMapIntensity=1.3;
     add('paint',0xffffff,.29,.42);this.values.paint.envMapIntensity=1.6;
-    add('leaf',0x577e37,.88);this.values.leaf.side=T.DoubleSide;
+    add('leaf',0x829669,.88);this.values.leaf.side=T.DoubleSide;
     add('stripe',0xe6dcc0,.8);add('red',0x8d322c,.6);add('skin',0xbf8c67,.9);
     add('neon',0xffffff,.4);this.values.neon.emissive.set(0xffffff);this.values.neon.emissiveIntensity=1.8;
     add('windowLight',0xcca774,.5);this.values.windowLight.emissive.set(0xffb064);this.values.windowLight.emissiveIntensity=.18;
   }
   async load(data:AssetData){
     const loader=new T.TextureLoader();
-    for(const [id,key]of [['aerial_asphalt_01','asphalt'],['concrete_floor_worn_001','sidewalk']]){
+    const bindings=[['aerial_asphalt_01','asphalt'],['concrete_floor_worn_001','sidewalk'],['white_stucco','stucco'],['palm_tree_bark','palmBark'],['aerial_sand','sand']];
+    for(const [id,key]of bindings){
       const maps=data.textures[id];if(!maps)continue;
       for(const [channel,url]of Object.entries(maps)){
         try{const t=await loader.loadAsync(`${import.meta.env.BASE_URL}${url}`);t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=8;if(channel==='color')t.colorSpace=T.SRGBColorSpace;
-          const m=this.values[key];if(channel==='color')m.map=t;else if(channel==='normal'){m.normalMap=t;m.normalScale.set(.4,.4);}else m.roughnessMap=t;m.needsUpdate=true;this.textures.push(t);
+          const m=this.values[key];if(channel==='color')m.map=t;else if(channel==='normal'){m.normalMap=t;m.normalScale.set(key==='stucco'?.22:.4,key==='stucco'?.22:.4);}else m.roughnessMap=t;m.needsUpdate=true;this.textures.push(t);
         }catch(error){console.warn('Packaged optional texture failed',url,error);}
       }
     }
