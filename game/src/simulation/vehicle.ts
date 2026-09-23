@@ -2,6 +2,7 @@ import * as T from 'three';
 import RAPIER from '@dimforge/rapier3d-compat';
 import { carModel,type CarModel } from '../render/vehicle-model';
 import { Materials } from '../render/materials';
+import { setHeadlights } from '../render/light-budget.mjs';
 import { clamp,damp,angleDelta } from '../core/math.mjs';
 import { surfaceHeight } from '../world/layout.mjs';
 import { createVehicleBody,VEHICLE_MASS,ENGINE_ACCELERATION } from './vehicle-body.mjs';
@@ -10,7 +11,7 @@ export class Vehicle {
   health=100;speed=0;steer=0;doorTime=0;controlled=false;traveled=0;private lastSpeed=0;
   constructor(readonly physics:RAPIER.World,scene:T.Scene,materials:Materials,x:number,z:number,yaw:number,color:T.ColorRepresentation,readonly police=false){
     const rigid=createVehicleBody(physics,x,surfaceHeight(x,z)+.85,z,yaw);this.body=rigid.body;this.collider=rigid.collider;
-    this.model=carModel(materials,color,police);scene.add(this.model.root);
+    this.model=carModel(materials,color,police);setHeadlights(this.model.lights,false,0);scene.add(this.model.root);
   }
   get position(){return this.body.translation();}
   get yaw(){const q=this.body.rotation();return Math.atan2(2*(q.w*q.y+q.x*q.z),1-2*(q.y*q.y+q.z*q.z));}
@@ -38,7 +39,7 @@ export class Vehicle {
     const p=this.body.translation(),q=this.body.rotation();this.model.root.position.set(p.x,p.y-.55,p.z);this.model.root.quaternion.set(q.x,q.y,q.z,q.w);
     this.model.wheels.forEach((wheel,i)=>{wheel.rotation.y=i<2?this.steer:0;});this.model.spins.forEach(spin=>spin.rotation.x+=this.speed*dt/.365);
     this.doorTime=Math.max(0,this.doorTime-dt);this.model.door.rotation.y=damp(this.model.door.rotation.y,this.doorTime>.25?.95:0,8,dt);
-    this.model.lights.forEach(light=>light.intensity=this.controlled?night*38:0);
+    setHeadlights(this.model.lights,this.controlled,night);
   }
   dispose(){this.model.dispose();this.physics.removeRigidBody(this.body);}
 }
