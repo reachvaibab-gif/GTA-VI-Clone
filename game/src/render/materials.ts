@@ -1,6 +1,7 @@
 import * as T from 'three';
 import { rng } from '../core/math.mjs';
 import { worldUV } from './world-uv';
+import { ResourceCache } from '../core/resource-cache.mjs';
 import type { AssetData } from '../types';
 function texture(base:string,grain:number,seed:number,tileLines=0):T.CanvasTexture{
   const c=document.createElement('canvas');c.width=c.height=256;const ctx=c.getContext('2d')!;
@@ -11,7 +12,7 @@ function texture(base:string,grain:number,seed:number,tileLines=0):T.CanvasTextu
   const t=new T.CanvasTexture(c);t.wrapS=t.wrapT=T.RepeatWrapping;t.colorSpace=T.SRGBColorSpace;t.anisotropy=8;return t;
 }
 export class Materials {
-  readonly values:Record<string,T.MeshStandardMaterial>={};private textures:T.Texture[]=[];private signs=new Map<string,T.MeshBasicMaterial>();
+  readonly values:Record<string,T.MeshStandardMaterial>={};private textures:T.Texture[]=[];private signs=new ResourceCache<T.MeshBasicMaterial>(m=>{m.map?.dispose();m.dispose();});
   constructor(){
     const add=(id:string,color:T.ColorRepresentation,roughness=.8,metalness=0,map?:T.Texture)=>{
       this.values[id]=new T.MeshStandardMaterial({color,roughness,metalness,map:map??null});if(map)this.textures.push(map);
@@ -45,12 +46,14 @@ export class Materials {
     }
   }
   sign(text:string,color='#ffd1b3'){
-    const key=text+color;if(this.signs.has(key))return this.signs.get(key)!;
-    const c=document.createElement('canvas');c.width=512;c.height=128;const ctx=c.getContext('2d')!;
-    ctx.fillStyle='#183236';ctx.fillRect(0,0,512,128);ctx.strokeStyle=color;ctx.lineWidth=3;ctx.strokeRect(7,7,498,114);
-    ctx.font='500 46px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=color;ctx.fillText(text.toUpperCase(),256,68,470);
-    const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;this.textures.push(t);const m=new T.MeshBasicMaterial({map:t,toneMapped:false});this.signs.set(key,m);return m;
+    return this.signs.acquire(text+color,()=>{
+      const c=document.createElement('canvas');c.width=512;c.height=128;const ctx=c.getContext('2d')!;
+      ctx.fillStyle='#183236';ctx.fillRect(0,0,512,128);ctx.strokeStyle=color;ctx.lineWidth=3;ctx.strokeRect(7,7,498,114);
+      ctx.font='500 46px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=color;ctx.fillText(text.toUpperCase(),256,68,470);
+      const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return new T.MeshBasicMaterial({map:t,toneMapped:false});
+    });
   }
+  releaseSign(material:T.Material){this.signs.release(material as T.MeshBasicMaterial);}
   setNight(amount:number){this.values.windowLight.emissiveIntensity=.08+amount*1.7;this.values.neon.emissiveIntensity=.08+amount*2.2;}
-  dispose(){for(const t of this.textures)t.dispose();for(const m of Object.values(this.values))m.dispose();for(const m of this.signs.values())m.dispose();}
+  dispose(){for(const t of this.textures)t.dispose();for(const m of Object.values(this.values))m.dispose();this.signs.clear();}
 }

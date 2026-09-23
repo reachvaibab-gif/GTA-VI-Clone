@@ -53,10 +53,21 @@ try{
   await phase('world streaming');await page.selectOption('#travel','-5380,7330');await page.waitForFunction(()=>window.__game.snapshot().actor.z>7000);
   s=await state();assert.ok(s.world.chunks<=25);assert.equal(s.progress.mission,null);checks.push('Long-distance travel replaces chunks and cancels active jobs');report.snapshots.push(s);
   await key('KeyM');await page.selectOption('#travel','2000,-420');await page.waitForFunction(()=>window.__game.snapshot().actor.x>1900);
-  await phase('visual capture');await key('Escape');await page.click('#pause [data-panel="settings"]');await page.selectOption('#quality','balanced');await page.click('#settings [data-close]');
-  await page.waitForFunction(()=>window.__game.snapshot().world.pending===0,undefined,{timeout:45000});
-  await page.evaluate(()=>window.__game.view(2120,48,-265,1930,10,-650));await page.waitForTimeout(1500);await shot('aerial');
-  await page.evaluate(()=>{window.__game.setTime(21);window.__game.view(2017,8,-315,1952,11,-530);});await page.waitForTimeout(1500);await shot('night');checks.push('Photo camera and night lighting render at balanced quality');
+  await phase('quality replacement and resource lifetime');await key('Escape');await page.click('#pause [data-panel="settings"]');
+  // Exercise the actual streamer while paused; avoid rendering every intermediate chunk on a software GPU.
+  await page.selectOption('#quality','balanced');await step(32);s=await state();
+  assert.equal(s.paused,true);assert.equal(s.world.pending,0);assert.equal(s.world.chunks,25);assert.equal(s.world.detailedChunks,25);
+  const resident=s.render;report.snapshots.push(s);
+  await page.selectOption('#quality','low');await step(32);s=await state();
+  assert.equal(s.world.chunks,9);assert.equal(s.world.detailedChunks,0);assert.equal(s.world.pending,0);
+  await page.selectOption('#quality','balanced');await step(32);s=await state();
+  assert.equal(s.world.chunks,25);assert.equal(s.world.detailedChunks,25);assert.equal(s.world.pending,0);
+  assert.ok(s.render.geometries<=resident.geometries+4,'Quality cycling must release superseded mesh geometry');
+  assert.ok(s.render.textures<=resident.textures+2,'Quality cycling must release superseded sign textures');
+  checks.push('Quality changes replace existing chunks and keep GPU resource counts bounded');report.snapshots.push(s);
+  await page.click('#settings [data-close]');await phase('visual capture');
+  await page.evaluate(()=>window.__game.view(2120,48,-265,1930,10,-650));await shot('aerial');
+  await page.evaluate(()=>{window.__game.setTime(21);window.__game.view(2017,8,-315,1952,11,-530);});await shot('night');checks.push('Photo camera and night lighting render at balanced quality');
   await page.evaluate(()=>window.__game.save());assert.ok(await page.evaluate(()=>localStorage.getItem('leonida.after-hours.v1')));checks.push('Versioned progress persists to local storage');
   report.final=await state();assert.deepEqual(errors,[],'No browser runtime, asset or shader errors');await phase('passed');
 }catch(error){report.failure=error.stack;process.exitCode=1;console.error(error);await write();if(page){await shot('failure').catch(()=>{});try{report.failureSnapshot=await state();}catch{}}}

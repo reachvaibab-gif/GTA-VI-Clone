@@ -32,9 +32,9 @@ export class Primitives {
 export class Batch {
   readonly group=new T.Group();
   private bins=new Map<string,Instance[]>();
-  private objects:T.InstancedMesh[]=[];
+  private objects:T.InstancedMesh[]=[];private originals:T.Matrix4[][]=[];
   private transform=new T.Object3D();private disposed=false;
-  constructor(readonly primitives:Primitives,readonly materials:Materials,readonly originX:number,readonly originZ:number){this.group.position.set(originX,0,originZ);}
+  constructor(readonly primitives:Primitives,readonly materials:Materials,readonly originX:number,readonly originZ:number,private retainTransforms=false){this.group.position.set(originX,0,originZ);}
   add(shape:keyof Primitives,material:string,x:number,y:number,z:number,sx:number,sy:number,sz:number,color:T.ColorRepresentation=0xffffff,ry=0,rx=0,rz=0){
     const key=String(shape)+'|'+material;if(!this.bins.has(key))this.bins.set(key,[]);
     const o=this.transform;o.position.set(x-this.originX,y,z-this.originZ);o.rotation.set(rx,ry,rz);o.scale.set(sx,sy,sz);o.updateMatrix();
@@ -47,15 +47,25 @@ export class Batch {
       if(!this.materials.values[mat])throw new Error(`Missing architectural material: ${mat}`);
       const m=new T.InstancedMesh(g,this.materials.values[mat],entries.length);
       entries.forEach((e,i)=>{m.setMatrixAt(i,e.matrix);m.setColorAt(i,e.color);});m.instanceMatrix.needsUpdate=true;if(m.instanceColor)m.instanceColor.needsUpdate=true;
-      m.castShadow=!['asphalt','sand','grass','stripe','sidewalk'].includes(mat);m.receiveShadow=true;m.computeBoundingSphere();this.group.add(m);this.objects.push(m);
+      m.castShadow=!['asphalt','sand','grass','stripe','sidewalk'].includes(mat);m.receiveShadow=true;m.computeBoundingSphere();this.group.add(m);this.objects.push(m);if(this.retainTransforms)this.originals.push(entries.map(e=>e.matrix));
     }
     this.bins.clear();return this.group;
+  }
+  hideCells(keys:Set<string>,size:number){
+    if(!this.retainTransforms)return;
+    const hidden=new T.Matrix4();
+    this.objects.forEach((mesh,index)=>{
+      this.originals[index].forEach((matrix,i)=>{
+        const e=matrix.elements,key=`${Math.floor((e[12]+this.originX)/size)},${Math.floor((e[14]+this.originZ)/size)}`;
+        if(keys.has(key)){hidden.makeScale(.000001,.000001,.000001);hidden.setPosition(e[12],e[13],e[14]);mesh.setMatrixAt(i,hidden);}else mesh.setMatrixAt(i,matrix);
+      });mesh.instanceMatrix.needsUpdate=true;
+    });
   }
   dispose(){
     if(this.disposed)return;this.disposed=true;
     // Sign planes are chunk-owned; instanced meshes borrow shared primitive geometry.
-    this.group.traverse(object=>{if(object instanceof T.Mesh&&!(object instanceof T.InstancedMesh))object.geometry.dispose();});
+    this.group.traverse(object=>{if(object instanceof T.Mesh&&!(object instanceof T.InstancedMesh)){object.geometry.dispose();for(const mat of Array.isArray(object.material)?object.material:[object.material])this.materials.releaseSign(mat);}});
     for(const mesh of this.objects)mesh.dispose();
-    this.group.removeFromParent();this.group.clear();this.objects.length=0;this.bins.clear();
+    this.group.removeFromParent();this.group.clear();this.objects.length=0;this.originals.length=0;this.bins.clear();
   }
 }
