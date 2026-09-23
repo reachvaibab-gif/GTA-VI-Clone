@@ -62,11 +62,11 @@
         "pedestrians": 0
       },
       "render": {
-        "calls": 187,
-        "triangles": 291760,
+        "calls": 182,
+        "triangles": 390112,
         "geometries": 92,
         "textures": 20,
-        "frameMs": 47.80201624798405
+        "frameMs": 33.99710452932213
       }
     },
     {
@@ -117,11 +117,11 @@
         "pedestrians": 9
       },
       "render": {
-        "calls": 338,
-        "triangles": 297210,
+        "calls": 335,
+        "triangles": 390434,
         "geometries": 240,
         "textures": 62,
-        "frameMs": 103.33479046150454
+        "frameMs": 97.08262373599358
       }
     },
     {
@@ -172,11 +172,11 @@
         "pedestrians": 10
       },
       "render": {
-        "calls": 316,
-        "triangles": 275182,
+        "calls": 312,
+        "triangles": 360910,
         "geometries": 234,
         "textures": 74,
-        "frameMs": 137.58432709551477
+        "frameMs": 135.8624478715767
       }
     }
   ],
@@ -185,28 +185,28 @@
       "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 116121
+      "bytes": 114954
     },
     "driving": {
       "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 248256
+      "bytes": 251929
     },
     "street": {
       "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 229710
+      "bytes": 233476
     },
     "failure": {
       "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 254200
+      "bytes": 258411
     }
   },
-  "startedAt": "2026-09-23T01:32:43.520Z",
+  "startedAt": "2026-09-23T01:41:30.448Z",
   "browser": "140.0.7339.16",
   "headed": true,
   "failure": "page.waitForFunction: Timeout 45000ms exceeded.\n    at /home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:57:14",
@@ -241,8 +241,8 @@
       ],
       "mission": null,
       "heat": 0,
-      "unseen": 7.066666666666647,
-      "playSeconds": 7.066666666666647
+      "unseen": 7.116666666666647,
+      "playSeconds": 7.116666666666647
     },
     "world": {
       "chunks": 25,
@@ -254,17 +254,17 @@
       "landmarks": 2716
     },
     "traffic": {
-      "cars": 9,
-      "pedestrians": 13
+      "cars": 10,
+      "pedestrians": 14
     },
     "render": {
-      "calls": 501,
-      "triangles": 436678,
-      "geometries": 735,
-      "textures": 157,
-      "frameMs": 147.12871774621368
+      "calls": 585,
+      "triangles": 606906,
+      "geometries": 805,
+      "textures": 171,
+      "frameMs": 146.76476292966325
     }
   },
-  "finishedAt": "2026-09-23T01:36:09.298Z",
+  "finishedAt": "2026-09-23T01:44:32.559Z",
   "serverLog": "  \u001b[32m➜\u001b[39m  \u001b[1mLocal\u001b[22m:   \u001b[36mhttp://127.0.0.1:\u001b[1m4173\u001b[22m/\u001b[39m\n"
 }
