@@ -1,7 +1,8 @@
 {
-  "phase": "load production game",
+  "phase": "drive",
   "checks": [
-    "Real renderer, reference data and physics initialized"
+    "Real renderer, reference data and physics initialized",
+    "Enter nearby vehicle through keyboard input"
   ],
   "errors": [],
   "warnings": [
@@ -75,32 +76,40 @@
         "triangles": 291760,
         "geometries": 92,
         "textures": 20,
-        "frameMs": 32.99535167067869
+        "frameMs": 48.241513404897475
       }
     }
   ],
-  "startedAt": "2026-09-23T00:44:44.863Z",
+  "captures": {
+    "menu": {
+      "source": "Actual WebGL canvas readback, without DOM overlay",
+      "width": 1280,
+      "height": 800,
+      "bytes": 119645
+    }
+  },
+  "startedAt": "2026-09-23T00:49:26.899Z",
   "browser": "140.0.7339.16",
-  "failure": "page.screenshot: Timeout 20000ms exceeded.\nCall log:\n  - taking page screenshot\n  - waiting for fonts to load...\n  - fonts loaded\n\n    at shot (/home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:19:36)\n    at /home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:31:9",
+  "failure": "AssertionError [ERR_ASSERTION]: Vehicle must physically move\n    at file:///home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:44:26",
   "failureSnapshot": {
     "ready": true,
-    "started": false,
-    "paused": true,
+    "started": true,
+    "paused": false,
     "photo": false,
     "actor": {
-      "x": 2000,
-      "y": 3.7399999999999998,
-      "z": -420,
+      "x": 1998,
+      "y": 3.2088717937469484,
+      "z": -425.0435791015625,
       "yaw": 3.141592653589793,
-      "speed": 0,
-      "driving": false,
+      "speed": 3.286750754373513e-13,
+      "driving": true,
       "health": 100,
-      "grounded": false
+      "grounded": true
     },
     "car": {
       "x": 1998,
-      "y": 3.950000047683716,
-      "z": -425,
+      "y": 3.7588717937469482,
+      "z": -425.0435791015625,
       "health": 100
     },
     "progress": {
@@ -108,11 +117,13 @@
       "money": 0,
       "completed": [],
       "bestTimes": {},
-      "discovered": [],
+      "discovered": [
+        "Ocean Beach"
+      ],
       "mission": null,
       "heat": 0,
-      "unseen": 0,
-      "playSeconds": 0
+      "unseen": 3.2833333333333266,
+      "playSeconds": 3.2833333333333266
     },
     "world": {
       "chunks": 9,
@@ -124,17 +135,17 @@
       "landmarks": 2716
     },
     "traffic": {
-      "cars": 0,
-      "pedestrians": 0
+      "cars": 6,
+      "pedestrians": 10
     },
     "render": {
-      "calls": 187,
-      "triangles": 291760,
-      "geometries": 92,
-      "textures": 20,
-      "frameMs": 119.13312009113616
+      "calls": 407,
+      "triangles": 288722,
+      "geometries": 380,
+      "textures": 98,
+      "frameMs": 108.90687224814259
     }
   },
-  "finishedAt": "2026-09-23T00:45:36.520Z",
+  "finishedAt": "2026-09-23T00:50:46.672Z",
   "serverLog": "  \u001b[32m➜\u001b[39m  \u001b[1mLocal\u001b[22m:   \u001b[36mhttp://127.0.0.1:\u001b[1m4173\u001b[22m/\u001b[39m\n"
 }
