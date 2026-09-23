@@ -1,0 +1,255 @@
+{
+  "files": 9654,
+  "landmarkRecords": 2819,
+  "samples": [
+    {
+      "id": "L1",
+      "name": "?",
+      "district": "Washington Beach",
+      "region": "Vice Beach",
+      "ig_address": "?, Washington Beach, Vice Beach",
+      "game_x": 1409.40126306379,
+      "game_y": 2803.2135475894142,
+      "real_life": "The Ritz-Carlton Bal Harbour, 10295 Collins Ave, Bal Harbour, FL 33154, USA",
+      "real_lat": 25.898996,
+      "real_lng": -80.1232991,
+      "tags": "l1 hotel",
+      "ingame_photo": "landmarks/Vice_Beach/L1_unnamed_ingame.jpg",
+      "reallife_photo": "landmarks/Vice_Beach/L1_unnamed_reallife.jpg"
+    },
+    {
+      "id": "L2",
+      "name": "?",
+      "district": "Washington Beach",
+      "region": "Vice Beach",
+      "ig_address": "?, Washington Beach, Vice Beach",
+      "game_x": 1491.644642010651,
+      "game_y": 2633.3023385608108,
+      "real_life": "Akoya Condominium, 6365 Collins Ave, Miami Beach, FL 33141, USA",
+      "real_lat": 25.8460686,
+      "real_lng": -80.11969669999999,
+      "tags": "residential",
+      "ingame_photo": "landmarks/Vice_Beach/L2_unnamed_ingame.jpg",
+      "reallife_photo": "landmarks/Vice_Beach/L2_unnamed_reallife.jpg"
+    },
+    {
+      "id": "L3",
+      "name": "?",
+      "district": "Washington Beach",
+      "region": "Vice Beach",
+      "ig_address": "?, Washington Beach, Vice Beach",
+      "game_x": 1541.925,
+      "game_y": 2562.866,
+      "real_life": "Sherry Frontenac Oceanfront Hotel, 6565 Collins Ave, Miami Beach, FL 33141, USA",
+      "real_lat": 25.8492902,
+      "real_lng": -80.1200515,
+      "tags": "hotel",
+      "ingame_photo": "landmarks/Vice_Beach/L3_unnamed_ingame.jpg",
+      "reallife_photo": "landmarks/Vice_Beach/L3_unnamed_reallife.jpg"
+    }
+  ],
+  "regions": [
+    "Vice Beach",
+    "Vice-Dale County",
+    "Dalton Island",
+    "Gloriana Key",
+    "Catalan Key",
+    "Vice City",
+    "Port Vice City",
+    "Rialto Islands",
+    "Waning Sands",
+    "Leonard County",
+    "Vice City International Airport",
+    "Mariana County",
+    "Peregrine Bay",
+    "Hamlet",
+    "Bluegrass",
+    "Key Lento",
+    "Kelly County",
+    "Port Gellhorn",
+    "Starfish Island",
+    "Watson Bay",
+    "Ambrosia",
+    "Catalan Bay",
+    "Lummox County",
+    "Leonida",
+    "Capri",
+    "Mount Kalaga National Park",
+    "Goose Key",
+    "Redhill",
+    "Belville",
+    "Key Largo",
+    "Gellhorn International Raceway",
+    "Gulf of Leonida",
+    "Atlantic Ocean",
+    "Leonida Straits",
+    "Emerald Springs",
+    "Buckskin",
+    "Yorktown",
+    "Fisher Island",
+    "Tequesta Retreat",
+    "La Perle",
+    "Bohemia",
+    "Peacock Bay",
+    "Allied Crystal",
+    "North Beaches"
+  ],
+  "tools": [
+    "_tools/build_catalog.py"
+  ],
+  "maps": [
+    {
+      "file": "_thumbs/maps/GTA456Relief.jpg",
+      "width": 480,
+      "height": 32
+    },
+    {
+      "file": "_thumbs/maps/GTA6Relief.jpg",
+      "width": 480,
+      "height": 16
+    },
+    {
+      "file": "_thumbs/maps/LeonidaV15GainsAndLosses.jpg",
+      "width": 480,
+      "height": 480
+    },
+    {
+      "file": "_thumbs/maps/detail_aiwe-1_z6.jpg",
+      "width": 373,
+      "height": 480
+    },
+    {
+      "file": "_thumbs/maps/detail_martipk-5_z6.jpg",
+      "width": 480,
+      "height": 462
+    },
+    {
+      "file": "_thumbs/maps/detail_rickrick-3_z6.jpg",
+      "width": 444,
+      "height": 480
+    },
+    {
+      "file": "_thumbs/maps/leonida_dupzor-51_z3.jpg",
+      "width": 480,
+      "height": 480
+    },
+    {
+      "file": "_thumbs/maps/leonida_dupzor-51_z4.jpg",
+      "width": 468,
+      "height": 480
+    },
+    {
+      "file": "_thumbs/maps/leonida_landmarks_annotated_z3.jpg",
+      "width": 384,
+      "height": 480
+    },
+    {
+      "file": "_thumbs/maps/leonida_yanis-16-aiwe-1-martipk-5-rickrick-3_z4.jpg",
+      "width": 415,
+      "height": 480
+    },
+    {
+      "file": "_thumbs/maps/leonida_yanis-16_z2.jpg",
+      "width": 480,
+      "height": 480
+    },
+    {
+      "file": "_thumbs/maps/leonida_yanis-16_z3.jpg",
+      "width": 480,
+      "height": 457
+    },
+    {
+      "file": "_thumbs/maps/leonida_yanis-16_z4.jpg",
+      "width": 480,
+      "height": 457
+    },
+    {
+      "file": "maps/GTA456Relief.png",
+      "width": 11960,
+      "height": 804
+    },
+    {
+      "file": "maps/GTA6Relief.png",
+      "width": 11960,
+      "height": 405
+    },
+    {
+      "file": "maps/LeonidaV15GainsAndLosses.png",
+      "width": 4000,
+      "height": 4000
+    },
+    {
+      "file": "maps/detail_aiwe-1_z6.jpg",
+      "width": 1792,
+      "height": 2304
+    },
+    {
+      "file": "maps/detail_martipk-5_z6.jpg",
+      "width": 6912,
+      "height": 6656
+    },
+    {
+      "file": "maps/detail_rickrick-3_z6.jpg",
+      "width": 12800,
+      "height": 13824
+    },
+    {
+      "file": "maps/leonida_dupzor-51_z3.jpg",
+      "width": 5120,
+      "height": 5120
+    },
+    {
+      "file": "maps/leonida_dupzor-51_z4.jpg",
+      "width": 9984,
+      "height": 10240
+    },
+    {
+      "file": "maps/leonida_landmarks_annotated_z3.jpg",
+      "width": 4100,
+      "height": 5120
+    },
+    {
+      "file": "maps/leonida_yanis-16-aiwe-1-martipk-5-rickrick-3_z4.jpg",
+      "width": 4864,
+      "height": 5632
+    },
+    {
+      "file": "maps/leonida_yanis-16_z2.jpg",
+      "width": 2816,
+      "height": 2816
+    },
+    {
+      "file": "maps/leonida_yanis-16_z3.jpg",
+      "width": 5376,
+      "height": 5120
+    },
+    {
+      "file": "maps/leonida_yanis-16_z4.jpg",
+      "width": 10752,
+      "height": 10240
+    }
+  ],
+  "officialSamples": [
+    "_thumbs/official_rockstar/editions/ultimate_edition/ULTIMATE_EDITION_01.jpg",
+    "_thumbs/official_rockstar/editions/ultimate_edition/ULTIMATE_EDITION_02.jpg",
+    "_thumbs/official_rockstar/editions/ultimate_edition/ULTIMATE_EDITION_ELECTRIC_FANG_01.jpg",
+    "_thumbs/official_rockstar/editions/ultimate_edition/ULTIMATE_EDITION_ELECTRIC_FANG_02.jpg",
+    "_thumbs/official_rockstar/editions/ultimate_edition/ULTIMATE_EDITION_ELECTRIC_FANG_03.jpg",
+    "_thumbs/official_rockstar/editions/ultimate_edition/ULTIMATE_EDITION_ELECTRIC_FANG_04.jpg",
+    "_thumbs/official_rockstar/editions/ultimate_edition/ULTIMATE_EDITION_GOODTIME_GEAR_01.jpg",
+    "_thumbs/official_rockstar/editions/ultimate_edition/ULTIMATE_EDITION_GROTTI_CHEETAH_01.jpg",
+    "_thumbs/official_rockstar/editions/ultimate_edition/ULTIMATE_EDITION_GROTTI_CHEETAH_02.jpg",
+    "_thumbs/official_rockstar/editions/ultimate_edition/ULTIMATE_EDITION_GROTTI_CHEETAH_03.jpg",
+    "_thumbs/official_rockstar/editions/ultimate_edition/ULTIMATE_EDITION_GROTTI_CHEETAH_04.jpg",
+    "_thumbs/official_rockstar/editions/ultimate_edition/ULTIMATE_EDITION_HAWK_AND_LITTLE_MORGAN_REVOLVERS_01.jpg",
+    "_thumbs/official_rockstar/editions/ultimate_edition/ULTIMATE_EDITION_HAWK_AND_LITTLE_MORGAN_REVOLVERS_02.jpg",
+    "_thumbs/official_rockstar/editions/ultimate_edition/ULTIMATE_EDITION_ONE_EYED_WILLIE_01.jpg",
+    "_thumbs/official_rockstar/editions/ultimate_edition/ULTIMATE_EDITION_ONE_EYED_WILLIE_02.jpg"
+  ],
+  "landmarkBounds": {
+    "minX": -9832.096534490327,
+    "maxX": 3147.429940123222,
+    "minY": -8000,
+    "maxY": 8896.53
+  }
+}
