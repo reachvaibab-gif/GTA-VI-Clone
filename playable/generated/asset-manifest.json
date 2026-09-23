@@ -1,0 +1,87 @@
+[
+  {
+    "id": "landmark-data",
+    "source": "references/landmarks/landmarks_gta6.json",
+    "license": "CC-BY-4.0",
+    "author": "gtadb.org and all contributors",
+    "modifications": "Finite coordinate selection; north mapped to negative Z; compacted fields."
+  },
+  {
+    "id": "reference-atlas",
+    "source": "references/maps/leonida_yanis-16_z3.jpg",
+    "license": "CC-BY-4.0",
+    "author": "gtadb.org and all contributors; Yanis",
+    "modifications": "Resized WebP. Display-only; not used as an uncalibrated terrain field."
+  },
+  {
+    "id": "generated-environment",
+    "source": "game/src/world and game/src/render",
+    "license": "Project-authored",
+    "author": "GTA-VI-Clone contributors",
+    "modifications": "Original procedural architecture, streets, vehicles, vegetation and materials."
+  },
+  {
+    "id": "casual",
+    "source": "https://raw.githubusercontent.com/agentkaerf/FreeModels/main/Ultimate%20Modular%20Men-%20Feb%202022/Individual%20Characters/glTF/Casual_2.gltf",
+    "license": "CC0-1.0",
+    "author": "Quaternius",
+    "verifiedBlobSha": "c40c07aee26776fc46c20c2a5d05460b1fcd4923",
+    "modifications": "Runtime scaling and animation blending only."
+  },
+  {
+    "id": "beach",
+    "source": "https://raw.githubusercontent.com/agentkaerf/FreeModels/main/Ultimate%20Modular%20Men-%20Feb%202022/Individual%20Characters/glTF/Beach.gltf",
+    "license": "CC0-1.0",
+    "author": "Quaternius",
+    "verifiedBlobSha": "2161dbab5ca3e866a32ec476803c0c0f589c5844",
+    "modifications": "Runtime scaling and animation blending only."
+  },
+  {
+    "id": "aerial_asphalt_01-color",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_asphalt_01/aerial_asphalt_01_diff_1k.jpg",
+    "license": "CC0-1.0",
+    "author": "Poly Haven contributors",
+    "sha256": "28bfd71288b364f825e0feb750e487410422d80bf3c31d32da01cae3bf085b58",
+    "modifications": "1K runtime texture selection."
+  },
+  {
+    "id": "aerial_asphalt_01-normal",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_asphalt_01/aerial_asphalt_01_nor_gl_1k.jpg",
+    "license": "CC0-1.0",
+    "author": "Poly Haven contributors",
+    "sha256": "7a58cb4460f75b66359b8e19bc92585554a79c2b0009e2b9e21eccac0a58d3f6",
+    "modifications": "1K runtime texture selection."
+  },
+  {
+    "id": "aerial_asphalt_01-roughness",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_asphalt_01/aerial_asphalt_01_rough_1k.jpg",
+    "license": "CC0-1.0",
+    "author": "Poly Haven contributors",
+    "sha256": "19ca745417e36a1cd1114411801933b3144a351d1409d0d9caa1046b9a20c0ec",
+    "modifications": "1K runtime texture selection."
+  },
+  {
+    "id": "concrete_floor_worn_001-color",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_worn_001/concrete_floor_worn_001_diff_1k.jpg",
+    "license": "CC0-1.0",
+    "author": "Poly Haven contributors",
+    "sha256": "6e40c0fc908f4d66431836f5abe203f3a4eb064e88824378a91a46a26e2f464c",
+    "modifications": "1K runtime texture selection."
+  },
+  {
+    "id": "concrete_floor_worn_001-normal",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_worn_001/concrete_floor_worn_001_nor_gl_1k.jpg",
+    "license": "CC0-1.0",
+    "author": "Poly Haven contributors",
+    "sha256": "523bd94a1be5dd2f11c2ae2b7d7c77445cf5bd9e41604db515a7c8364dcba067",
+    "modifications": "1K runtime texture selection."
+  },
+  {
+    "id": "concrete_floor_worn_001-roughness",
+    "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_worn_001/concrete_floor_worn_001_rough_1k.jpg",
+    "license": "CC0-1.0",
+    "author": "Poly Haven contributors",
+    "sha256": "069efe4ca018e0ef61fd8cc9964395ba8272284ae239da68d7f87988e2e9f488",
+    "modifications": "1K runtime texture selection."
+  }
+]

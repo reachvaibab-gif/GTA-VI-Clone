@@ -1,5 +1,5 @@
 {
-  "phase": "visual capture",
+  "phase": "passed",
   "checks": [
     "Real renderer, reference data and physics initialized",
     "Enter nearby vehicle through keyboard input",
@@ -8,7 +8,9 @@
     "Collision-aware character walking",
     "Mission selection starts a real timed job",
     "Map pauses simulation and clears gameplay input",
-    "Long-distance travel replaces chunks and cancels active jobs"
+    "Long-distance travel replaces chunks and cancels active jobs",
+    "Photo camera and night lighting render at balanced quality",
+    "Versioned progress persists to local storage"
   ],
   "errors": [],
   "warnings": [
@@ -66,7 +68,7 @@
         "triangles": 291760,
         "geometries": 92,
         "textures": 20,
-        "frameMs": 39.255754781751286
+        "frameMs": 33.27524388029078
       }
     },
     {
@@ -121,7 +123,7 @@
         "triangles": 302120,
         "geometries": 380,
         "textures": 64,
-        "frameMs": 92.39717138319986
+        "frameMs": 96.90055477820383
       }
     },
     {
@@ -155,8 +157,8 @@
         ],
         "mission": null,
         "heat": 0,
-        "unseen": 6.11666666666665,
-        "playSeconds": 6.11666666666665
+        "unseen": 5.999999999999984,
+        "playSeconds": 5.999999999999984
       },
       "world": {
         "chunks": 9,
@@ -172,11 +174,11 @@
         "pedestrians": 10
       },
       "render": {
-        "calls": 178,
-        "triangles": 271876,
+        "calls": 182,
+        "triangles": 271924,
         "geometries": 374,
         "textures": 64,
-        "frameMs": 136.93840266797005
+        "frameMs": 135.16086169022915
       }
     }
   ],
@@ -185,36 +187,41 @@
       "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 116335
+      "bytes": 116270
     },
     "driving": {
       "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 246456
+      "bytes": 246451
     },
     "street": {
       "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 228359
+      "bytes": 230584
     },
-    "failure": {
+    "aerial": {
       "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 254079
+      "bytes": 117905
+    },
+    "night": {
+      "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
+      "width": 1280,
+      "height": 800,
+      "bytes": 115727
     }
   },
-  "startedAt": "2026-09-23T01:22:10.767Z",
+  "startedAt": "2026-09-23T01:28:14.514Z",
   "browser": "140.0.7339.16",
   "headed": true,
-  "failure": "page.waitForFunction: Timeout 45000ms exceeded.\n    at /home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:57:14",
-  "failureSnapshot": {
+  "final": {
     "ready": true,
     "started": true,
-    "paused": false,
-    "photo": false,
+    "paused": true,
+    "photo": true,
     "actor": {
       "x": 2000,
       "y": 3.2300797843933107,
@@ -241,8 +248,8 @@
       ],
       "mission": null,
       "heat": 0,
-      "unseen": 7.19999999999998,
-      "playSeconds": 7.19999999999998
+      "unseen": 7.183333333333313,
+      "playSeconds": 7.183333333333313
     },
     "world": {
       "chunks": 25,
@@ -258,13 +265,13 @@
       "pedestrians": 13
     },
     "render": {
-      "calls": 517,
-      "triangles": 443304,
-      "geometries": 599,
+      "calls": 755,
+      "triangles": 542102,
+      "geometries": 669,
       "textures": 169,
-      "frameMs": 149.23304225962755
+      "frameMs": 138.0783174208956
     }
   },
-  "finishedAt": "2026-09-23T01:25:32.439Z",
+  "finishedAt": "2026-09-23T01:31:15.921Z",
   "serverLog": "  \u001b[32m➜\u001b[39m  \u001b[1mLocal\u001b[22m:   \u001b[36mhttp://127.0.0.1:\u001b[1m4173\u001b[22m/\u001b[39m\n"
 }
