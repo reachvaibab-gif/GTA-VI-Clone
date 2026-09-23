@@ -1,7 +1,14 @@
 {
-  "phase": "load production game",
+  "phase": "visual capture",
   "checks": [
-    "Real renderer, reference data and physics initialized"
+    "Real renderer, reference data and physics initialized",
+    "Enter nearby vehicle through keyboard input",
+    "Throttle moves the dynamic vehicle in the correct direction",
+    "Safe vehicle exit",
+    "Collision-aware character walking",
+    "Mission selection starts a real timed job",
+    "Map pauses simulation and clears gameplay input",
+    "Long-distance travel replaces chunks and cancels active jobs"
   ],
   "errors": [],
   "warnings": [
@@ -59,14 +66,205 @@
         "triangles": 291760,
         "geometries": 92,
         "textures": 20,
-        "frameMs": 47.772302924341304
+        "frameMs": 47.800359952511386
+      }
+    },
+    {
+      "ready": true,
+      "started": true,
+      "paused": false,
+      "photo": false,
+      "actor": {
+        "x": 1998,
+        "y": 3.2089752674102785,
+        "z": -447.6413879394531,
+        "yaw": 3.141592653589793,
+        "speed": 13.930045127868652,
+        "driving": true,
+        "health": 100,
+        "grounded": true
+      },
+      "car": {
+        "x": 1998,
+        "y": 3.7589752674102783,
+        "z": -447.6413879394531,
+        "health": 100
+      },
+      "progress": {
+        "version": 1,
+        "money": 0,
+        "completed": [],
+        "bestTimes": {},
+        "discovered": [
+          "Ocean Beach"
+        ],
+        "mission": null,
+        "heat": 0,
+        "unseen": 3.0833333333333273,
+        "playSeconds": 3.0833333333333273
+      },
+      "world": {
+        "chunks": 9,
+        "pending": 0,
+        "colliders": 727
+      },
+      "assets": {
+        "characters": 2,
+        "landmarks": 2716
+      },
+      "traffic": {
+        "cars": 6,
+        "pedestrians": 9
+      },
+      "render": {
+        "calls": 480,
+        "triangles": 302120,
+        "geometries": 380,
+        "textures": 64,
+        "frameMs": 104.00762148654775
+      }
+    },
+    {
+      "ready": true,
+      "started": true,
+      "paused": false,
+      "photo": false,
+      "actor": {
+        "x": -5380,
+        "y": 3.7399999999999998,
+        "z": 7330,
+        "yaw": 3.141592653589793,
+        "speed": 0,
+        "driving": false,
+        "health": 100,
+        "grounded": true
+      },
+      "car": {
+        "x": -5382,
+        "y": 3.950000047683716,
+        "z": 7325,
+        "health": 100
+      },
+      "progress": {
+        "version": 1,
+        "money": 0,
+        "completed": [],
+        "bestTimes": {},
+        "discovered": [
+          "Ocean Beach"
+        ],
+        "mission": null,
+        "heat": 0,
+        "unseen": 6.016666666666651,
+        "playSeconds": 6.016666666666651
+      },
+      "world": {
+        "chunks": 9,
+        "pending": 0,
+        "colliders": 36
+      },
+      "assets": {
+        "characters": 2,
+        "landmarks": 2716
+      },
+      "traffic": {
+        "cars": 6,
+        "pedestrians": 10
+      },
+      "render": {
+        "calls": 177,
+        "triangles": 271864,
+        "geometries": 374,
+        "textures": 64,
+        "frameMs": 138.31591404927428
       }
     }
   ],
-  "captures": {},
-  "startedAt": "2026-09-23T01:08:15.827Z",
+  "captures": {
+    "menu": {
+      "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
+      "width": 1280,
+      "height": 800,
+      "bytes": 116070
+    },
+    "driving": {
+      "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
+      "width": 1280,
+      "height": 800,
+      "bytes": 246564
+    },
+    "street": {
+      "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
+      "width": 1280,
+      "height": 800,
+      "bytes": 229360
+    },
+    "failure": {
+      "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
+      "width": 1280,
+      "height": 800,
+      "bytes": 253963
+    }
+  },
+  "startedAt": "2026-09-23T01:10:27.914Z",
   "browser": "140.0.7339.16",
   "headed": true,
-  "failure": "Error: WebGL frame readback exceeded 30000ms\n    at Timeout._onTimeout (file:///home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:12:100)\n    at listOnTimeout (node:internal/timers:585:17)\n    at process.processTimers (node:internal/timers:521:7)",
+  "failure": "page.waitForFunction: Timeout 45000ms exceeded.\n    at /home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:57:14",
+  "failureSnapshot": {
+    "ready": true,
+    "started": true,
+    "paused": false,
+    "photo": false,
+    "actor": {
+      "x": 2000,
+      "y": 3.2300797843933107,
+      "z": -420,
+      "yaw": 3.141592653589793,
+      "speed": 0.00002555251165374263,
+      "driving": false,
+      "health": 100,
+      "grounded": true
+    },
+    "car": {
+      "x": 1998,
+      "y": 3.7588717937469482,
+      "z": -425,
+      "health": 100
+    },
+    "progress": {
+      "version": 1,
+      "money": 0,
+      "completed": [],
+      "bestTimes": {},
+      "discovered": [
+        "Ocean Beach"
+      ],
+      "mission": null,
+      "heat": 0,
+      "unseen": 7.09999999999998,
+      "playSeconds": 7.09999999999998
+    },
+    "world": {
+      "chunks": 25,
+      "pending": 0,
+      "colliders": 1520
+    },
+    "assets": {
+      "characters": 2,
+      "landmarks": 2716
+    },
+    "traffic": {
+      "cars": 8,
+      "pedestrians": 13
+    },
+    "render": {
+      "calls": 517,
+      "triangles": 443304,
+      "geometries": 599,
+      "textures": 169,
+      "frameMs": 148.71844163626488
+    }
+  },
+  "finishedAt": "2026-09-23T01:13:56.534Z",
   "serverLog": "  \u001b[32m➜\u001b[39m  \u001b[1mLocal\u001b[22m:   \u001b[36mhttp://127.0.0.1:\u001b[1m4173\u001b[22m/\u001b[39m\n"
 }
