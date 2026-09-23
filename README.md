@@ -1,6 +1,10 @@
 # Build verification evidence
 
-Source commit: 183c7d7c5d64ca80ccef7a32fcf1d4048b4c9997
-Run: 35802548121
+Source commit: cc21a5e354fae6b78d519356896694402b9288d2
+Run: 35803251389
 
-This private branch contains bounded test reports and screenshots only. It is not a deployment or a completion claim.
+Browser verification: **not passed; read the report**.
+
+Screenshots and reports belong to this exact source revision. Software-rendered CI timings are not Mac hardware benchmarks.
+
+This branch is private build evidence, not a public deployment or a GTA VI completion claim.

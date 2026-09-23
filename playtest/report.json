@@ -1,4 +1,5 @@
 {
+  "phase": "load production game",
   "checks": [
     "Real renderer, reference data and physics initialized"
   ],
@@ -73,13 +74,14 @@
         "calls": 187,
         "triangles": 291760,
         "geometries": 92,
-        "textures": 18,
-        "frameMs": 33.36280619836013
+        "textures": 20,
+        "frameMs": 32.99535167067869
       }
     }
   ],
-  "startedAt": "2026-09-23T00:34:49.912Z",
-  "failure": "page.screenshot: Timeout 30000ms exceeded.\nCall log:\n  - taking page screenshot\n  - waiting for fonts to load...\n  - fonts loaded\n\n    at shot (/home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:14:36)\n    at /home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:24:9",
+  "startedAt": "2026-09-23T00:44:44.863Z",
+  "browser": "140.0.7339.16",
+  "failure": "page.screenshot: Timeout 20000ms exceeded.\nCall log:\n  - taking page screenshot\n  - waiting for fonts to load...\n  - fonts loaded\n\n    at shot (/home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:19:36)\n    at /home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:31:9",
   "failureSnapshot": {
     "ready": true,
     "started": false,
@@ -129,10 +131,10 @@
       "calls": 187,
       "triangles": 291760,
       "geometries": 92,
-      "textures": 18,
-      "frameMs": 134.29765228834847
+      "textures": 20,
+      "frameMs": 119.13312009113616
     }
   },
-  "serverLog": "\n> leonida-browser@0.1.0 preview\n> vite preview --host 127.0.0.1 --port 4173\n\n  \u001b[32m➜\u001b[39m  \u001b[1mLocal\u001b[22m:   \u001b[36mhttp://127.0.0.1:\u001b[1m4173\u001b[22m/\u001b[39m\n",
-  "finishedAt": "2026-09-23T00:36:23.444Z"
+  "finishedAt": "2026-09-23T00:45:36.520Z",
+  "serverLog": "  \u001b[32m➜\u001b[39m  \u001b[1mLocal\u001b[22m:   \u001b[36mhttp://127.0.0.1:\u001b[1m4173\u001b[22m/\u001b[39m\n"
 }
