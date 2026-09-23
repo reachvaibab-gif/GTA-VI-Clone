@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {newProgress,startJob,updateProgress,serializeSave,parseSave,JOBS} from '../src/simulation/progression.mjs';
+import {FixedClock} from '../src/core/clock.mjs';
+import {wantedChunks,chunkKey,SPAWN,surfaceHeight} from '../src/world/layout.mjs';
+test('streaming budget remains bounded across world coordinates',()=>{for(const p of [[0,0],[-8000,7100],[2200,-3200]]){const q=wantedChunks(...p,2);assert.equal(q.length,25);assert.equal(new Set(q.map(x=>x.key)).size,25);assert.equal(q[0].key,chunkKey(...p));}});
+test('spawn is on elevated drivable land',()=>assert.ok(surfaceHeight(SPAWN.x,SPAWN.z)>0));
+test('fixed timestep clamps long suspended frames',()=>{const c=new FixedClock();let count=0;c.advance(60,()=>count++);assert.equal(count,5);assert.ok(c.dropped>0);});
+test('delivery requires ordered checkpoints and awards once',()=>{const p=newProgress();startJob(p,'first-light');const j=JOBS[0];for(const [x,z] of j.points.slice(1))updateProgress(p,1,{x,z,health:100,driving:true});assert.equal(p.money,650);assert.equal(p.mission,null);updateProgress(p,1,{x:120,z:420,health:100,driving:true});assert.equal(p.money,650);});
+test('walking cannot complete vehicle delivery',()=>{const p=newProgress();startJob(p,'first-light');updateProgress(p,1,{x:1995,z:-1020,health:100,driving:false});assert.equal(p.mission.checkpoint,1);});
+test('expired mission fails without award',()=>{const p=newProgress();startJob(p,'shore-run');const e=updateProgress(p,200,{x:0,z:0,health:100,driving:true});assert.equal(e.type,'failed');assert.equal(p.money,0);});
+test('untrusted save validates version and finite bounded coordinates',()=>{assert.equal(parseSave('{oops'),null);assert.equal(parseSave(JSON.stringify({version:2})),null);const p=newProgress();const saved=serializeSave(p,{x:2000,z:-420,yaw:3.14},{});assert.equal(parseSave(saved).actor.x,2000);assert.equal(parseSave(saved.replace('2000','2000000')),null);});
