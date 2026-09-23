@@ -4,39 +4,44 @@ import { Vehicle } from './vehicle';
 import { Materials } from '../render/materials';
 import { CharacterLibrary,CharacterView } from '../render/characters';
 import { SEGMENTS,surfaceHeight,nearestRoad } from '../world/layout.mjs';
-import { rng,angleDelta } from '../core/math.mjs';
+import { rng,angleDelta,pointSegment } from '../core/math.mjs';
 import type { ActorState } from '../types';
 type TrafficCar={car:Vehicle;segment:number;direction:number;target:number};
 type Walker={view:CharacterView;x:number;z:number;yaw:number;segment:number;t:number;direction:number;speed:number};
 export class Traffic {
   readonly cars:TrafficCar[]=[];readonly walkers:Walker[]=[];
-  private random=rng(46006);private accumulator=0;
+  private random=rng(46006);private accumulator=0;private serial=0;
   constructor(readonly scene:T.Scene,readonly physics:RAPIER.World,readonly materials:Materials,readonly characters:CharacterLibrary){}
-  private spawnCar(actor:ActorState,index:number){
-    const nearby=SEGMENTS.map((s,i)=>({s,i})).filter(({s})=>{
-      const mx=(s.a[0]+s.b[0])/2,mz=(s.a[1]+s.b[1])/2;
-      return Math.hypot(mx-actor.x,mz-actor.z)<1000||Math.hypot(s.a[0]-actor.x,s.a[1]-actor.z)<600;
-    });
+  private spawnCar(actor:ActorState,forcePolice=false){
+    // Project onto nearby segments rather than sampling their distant endpoints.
+    const nearby=SEGMENTS.map((s,i)=>({s,i,hit:pointSegment(actor.x,actor.z,...s.a,...s.b)})).filter(({hit})=>hit.distance<260);
     if(!nearby.length)return;
-    const {s,i}=nearby[Math.floor(this.random()*nearby.length)],direction=this.random()>.5?1:-1;
-    const hit=nearestRoad(actor.x,actor.z);let t=hit?.segment.id===s.id?hit.t:.5;t=Math.max(.06,Math.min(.94,t+(this.random()-.5)*Math.min(.65,400/s.length)));
+    const {s,i,hit}=nearby[Math.floor(this.random()*nearby.length)],direction=this.random()>.5?1:-1;
+    const t=Math.max(.025,Math.min(.975,hit.t+(this.random()>.5?1:-1)*(75+this.random()*100)/s.length));
     const x=s.a[0]+(s.b[0]-s.a[0])*t-Math.cos(s.yaw)*direction*s.width*.24,z=s.a[1]+(s.b[1]-s.a[1])*t+Math.sin(s.yaw)*direction*s.width*.24;
-    if(Math.hypot(x-actor.x,z-actor.z)<30||this.cars.some(v=>Math.hypot(v.car.position.x-x,v.car.position.z-z)<10))return;
-    const police=index%7===6,color=police?0xe7e5dc:[0x58787b,0xad624b,0xd3ccad,0x27353e,0x7b8776,0xc5b7b2][index%6];
+    const distance=Math.hypot(x-actor.x,z-actor.z);
+    if(distance<35||distance>300||this.cars.some(v=>Math.hypot(v.car.position.x-x,v.car.position.z-z)<12))return;
+    const index=this.serial++,police=forcePolice||index%6===5;
+    const color=police?0xe7e5dc:[0x58787b,0xad624b,0xd3ccad,0x27353e,0x7b8776,0xc5b7b2][index%6];
     const car=new Vehicle(this.physics,this.scene,this.materials,x,z,s.yaw+(direction<0?Math.PI:0),color,police);
     this.cars.push({car,segment:i,direction,target:direction>0?1:0});
   }
   private spawnWalker(actor:ActorState,index:number){
     const hit=nearestRoad(actor.x+(this.random()-.5)*180,actor.z+(this.random()-.5)*180);if(!hit||hit.segment.kind!=='urban')return;
     const s=hit.segment,segment=SEGMENTS.findIndex(v=>v.id===s.id),direction=this.random()>.5?1:-1;
-    const x=hit.x-Math.cos(s.yaw)*direction*(s.width/2+2.4),z=hit.z+Math.sin(s.yaw)*direction*(s.width/2+2.4);
+    const x=hit.x-Math.cos(s.yaw)*(s.width/2+2.4),z=hit.z+Math.sin(s.yaw)*(s.width/2+2.4);
     const view=this.characters.make(index);this.scene.add(view.root);this.walkers.push({view,x,z,segment,t:hit.t,direction,yaw:s.yaw+(direction<0?Math.PI:0),speed:.85+this.random()*.6});
   }
   tick(dt:number,actor:ActorState,heat:number,enabled:boolean,budget=10){
     this.accumulator+=dt;
-    for(let i=this.cars.length-1;i>=0;i--){const e=this.cars[i],p=e.car.position;if(!e.car.controlled&&(!enabled||Math.hypot(p.x-actor.x,p.z-actor.z)>750||p.y< -3)){e.car.dispose();this.cars.splice(i,1);}}
+    for(let i=this.cars.length-1;i>=0;i--){const e=this.cars[i],p=e.car.position;if(!e.car.controlled&&((!enabled&&!e.car.police)||Math.hypot(p.x-actor.x,p.z-actor.z)>450||p.y< -3)){e.car.dispose();this.cars.splice(i,1);}}
     for(let i=this.walkers.length-1;i>=0;i--){const w=this.walkers[i];if(!enabled||Math.hypot(w.x-actor.x,w.z-actor.z)>270){w.view.dispose();this.walkers.splice(i,1);}}
-    if(enabled&&this.accumulator>.3){this.accumulator=0;if(this.cars.length<budget)this.spawnCar(actor,this.cars.length);if(this.walkers.length<budget+4)this.spawnWalker(actor,this.walkers.length);}
+    if(this.accumulator>.3){
+      this.accumulator=0;
+      if(heat>0&&!this.cars.some(e=>e.car.police&&!e.car.controlled))this.spawnCar(actor,true);
+      else if(enabled&&this.cars.length<budget)this.spawnCar(actor);
+      if(enabled&&this.walkers.length<budget+4)this.spawnWalker(actor,this.walkers.length);
+    }
     let seen=false;
     for(const e of this.cars){
       if(e.car.controlled)continue;
