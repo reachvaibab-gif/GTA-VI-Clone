@@ -1,0 +1,2 @@
+Selected Poly Haven assets are CC0 1.0 Universal. Source URLs and hashes are recorded in generated/asset-manifest.json.
+https://polyhaven.com/license

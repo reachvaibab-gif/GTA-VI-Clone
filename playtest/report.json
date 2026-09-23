@@ -1,17 +1,22 @@
 {
-  "phase": "brake and exit",
+  "phase": "passed",
   "checks": [
     "Real renderer, reference data and physics initialized",
     "Enter nearby vehicle through keyboard input",
     "Throttle moves the dynamic vehicle in the correct direction",
     "Safe vehicle exit",
-    "Collision-aware character walking"
+    "Collision-aware character walking",
+    "Mission selection starts a real timed job",
+    "Map pauses simulation and clears gameplay input",
+    "Long-distance travel replaces chunks and cancels active jobs",
+    "Quality changes replace existing chunks and keep GPU resource counts bounded",
+    "Photo camera and night lighting render at balanced quality",
+    "Versioned progress persists to local storage"
   ],
   "errors": [],
   "warnings": [
     "using deprecated parameters for the initialization function; pass a single object instead",
-    "THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported.",
-    "WebGL: CONTEXT_LOST_WEBGL: loseContext: context lost"
+    "THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported."
   ],
   "snapshots": [
     {
@@ -65,7 +70,7 @@
         "triangles": 390112,
         "geometries": 92,
         "textures": 27,
-        "frameMs": 33.03518164847499
+        "frameMs": 48.241513404897475
       }
     },
     {
@@ -121,47 +126,233 @@
         "triangles": 390434,
         "geometries": 240,
         "textures": 69,
-        "frameMs": 91.53481158375648
+        "frameMs": 97.63561416829351
+      }
+    },
+    {
+      "ready": true,
+      "started": true,
+      "paused": false,
+      "photo": false,
+      "actor": {
+        "x": -5380,
+        "y": 3.7399999999999998,
+        "z": 7330,
+        "yaw": 3.141592653589793,
+        "speed": 0,
+        "driving": false,
+        "health": 100,
+        "grounded": true
+      },
+      "car": {
+        "x": -5382,
+        "y": 3.950000047683716,
+        "z": 7325,
+        "health": 100
+      },
+      "progress": {
+        "version": 1,
+        "money": 0,
+        "completed": [],
+        "bestTimes": {},
+        "discovered": [
+          "Ocean Beach"
+        ],
+        "mission": null,
+        "heat": 0,
+        "unseen": 6.16666666666665,
+        "playSeconds": 6.16666666666665
+      },
+      "world": {
+        "chunks": 9,
+        "pending": 0,
+        "detailedChunks": 0,
+        "colliders": 36
+      },
+      "assets": {
+        "characters": 2,
+        "landmarks": 2716
+      },
+      "traffic": {
+        "cars": 6,
+        "pedestrians": 10
+      },
+      "render": {
+        "calls": 309,
+        "triangles": 360874,
+        "geometries": 234,
+        "textures": 81,
+        "frameMs": 134.46296233137545
+      }
+    },
+    {
+      "ready": true,
+      "started": true,
+      "paused": true,
+      "photo": false,
+      "actor": {
+        "x": 2000,
+        "y": 3.7399999999999998,
+        "z": -420,
+        "yaw": 3.141592653589793,
+        "speed": 0,
+        "driving": false,
+        "health": 100,
+        "grounded": true
+      },
+      "car": {
+        "x": 1998,
+        "y": 3.950000047683716,
+        "z": -425,
+        "health": 100
+      },
+      "progress": {
+        "version": 1,
+        "money": 0,
+        "completed": [],
+        "bestTimes": {},
+        "discovered": [
+          "Ocean Beach"
+        ],
+        "mission": null,
+        "heat": 0,
+        "unseen": 6.16666666666665,
+        "playSeconds": 6.16666666666665
+      },
+      "world": {
+        "chunks": 25,
+        "pending": 0,
+        "detailedChunks": 25,
+        "colliders": 1520
+      },
+      "assets": {
+        "characters": 2,
+        "landmarks": 2716
+      },
+      "traffic": {
+        "cars": 6,
+        "pedestrians": 10
+      },
+      "render": {
+        "calls": 442,
+        "triangles": 616586,
+        "geometries": 549,
+        "textures": 147,
+        "frameMs": 142.08921751379845
+      }
+    },
+    {
+      "ready": true,
+      "started": true,
+      "paused": true,
+      "photo": false,
+      "actor": {
+        "x": 2000,
+        "y": 3.7399999999999998,
+        "z": -420,
+        "yaw": 3.141592653589793,
+        "speed": 0,
+        "driving": false,
+        "health": 100,
+        "grounded": true
+      },
+      "car": {
+        "x": 1998,
+        "y": 3.950000047683716,
+        "z": -425,
+        "health": 100
+      },
+      "progress": {
+        "version": 1,
+        "money": 0,
+        "completed": [],
+        "bestTimes": {},
+        "discovered": [
+          "Ocean Beach"
+        ],
+        "mission": null,
+        "heat": 0,
+        "unseen": 6.16666666666665,
+        "playSeconds": 6.16666666666665
+      },
+      "world": {
+        "chunks": 25,
+        "pending": 0,
+        "detailedChunks": 25,
+        "colliders": 1520
+      },
+      "assets": {
+        "characters": 2,
+        "landmarks": 2716
+      },
+      "traffic": {
+        "cars": 6,
+        "pedestrians": 10
+      },
+      "render": {
+        "calls": 423,
+        "triangles": 622282,
+        "geometries": 536,
+        "textures": 147,
+        "frameMs": 143.96107086587463
       }
     }
   ],
   "captures": {
     "menu": {
       "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
-      "width": 1280,
-      "height": 800,
-      "bytes": 156816
+      "width": 960,
+      "height": 600,
+      "bytes": 95514
     },
     "driving": {
       "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
+      "width": 960,
+      "height": 600,
+      "bytes": 111618
+    },
+    "street": {
+      "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
+      "width": 960,
+      "height": 600,
+      "bytes": 139216
+    },
+    "aerial": {
+      "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
+      "width": 960,
+      "height": 600,
+      "bytes": 106240
+    },
+    "night": {
+      "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 182803
+      "bytes": 137752
     }
   },
-  "startedAt": "2026-09-23T02:03:38.389Z",
+  "startedAt": "2026-09-23T02:17:03.619Z",
+  "softwareGpu": "SwiftShader; GPU watchdog disabled for diagnostic readback; application and per-operation deadlines remain enforced. Not a hardware performance benchmark.",
   "browser": "140.0.7339.16",
   "headed": true,
-  "failure": "AssertionError [ERR_ASSERTION]: Rendered frame must not be blank\n    at shot (file:///home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:22:49)\n    at async file:///home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:50:240",
-  "failureSnapshot": {
+  "final": {
     "ready": true,
     "started": true,
     "paused": true,
-    "photo": false,
+    "photo": true,
     "actor": {
-      "x": 1992.6968994140625,
-      "y": 3.2300330543518068,
-      "z": -465.0688171386719,
-      "yaw": 3.1420927383466237,
-      "speed": 0.8466907404363155,
+      "x": 2000,
+      "y": 3.7399999999999998,
+      "z": -420,
+      "yaw": 3.141592653589793,
+      "speed": 0,
       "driving": false,
       "health": 100,
       "grounded": true
     },
     "car": {
-      "x": 1995,
-      "y": 3.7589361667633057,
-      "z": -462.83294677734375,
+      "x": 1998,
+      "y": 3.950000047683716,
+      "z": -425,
       "health": 100
     },
     "progress": {
@@ -178,10 +369,10 @@
       "playSeconds": 6.16666666666665
     },
     "world": {
-      "chunks": 9,
+      "chunks": 25,
       "pending": 0,
-      "detailedChunks": 0,
-      "colliders": 727
+      "detailedChunks": 25,
+      "colliders": 1520
     },
     "assets": {
       "characters": 2,
@@ -192,13 +383,13 @@
       "pedestrians": 10
     },
     "render": {
-      "calls": 315,
-      "triangles": 360946,
-      "geometries": 240,
-      "textures": 81,
-      "frameMs": 114.68271498465971
+      "calls": 634,
+      "triangles": 821656,
+      "geometries": 545,
+      "textures": 148,
+      "frameMs": 138.20537572348996
     }
   },
-  "finishedAt": "2026-09-23T02:04:58.866Z",
+  "finishedAt": "2026-09-23T02:20:32.863Z",
   "serverLog": "  \u001b[32m➜\u001b[39m  \u001b[1mLocal\u001b[22m:   \u001b[36mhttp://127.0.0.1:\u001b[1m4173\u001b[22m/\u001b[39m\n"
 }
