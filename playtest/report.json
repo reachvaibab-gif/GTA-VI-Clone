@@ -1,58 +1,100 @@
 {
-  "phase": "load production game",
-  "checks": [],
+  "phase": "drive",
+  "checks": [
+    "Real renderer, reference data and physics initialized",
+    "Enter nearby vehicle through keyboard input",
+    "Throttle moves the dynamic vehicle in the correct direction"
+  ],
   "errors": [],
   "warnings": [
-    "THREE.Material: parameter 'map' has value of undefined.",
-    "THREE.Material: parameter 'map' has value of undefined.",
-    "THREE.Material: parameter 'map' has value of undefined.",
-    "THREE.Material: parameter 'map' has value of undefined.",
-    "THREE.Material: parameter 'map' has value of undefined.",
-    "THREE.Material: parameter 'map' has value of undefined.",
-    "THREE.Material: parameter 'map' has value of undefined.",
-    "THREE.Material: parameter 'map' has value of undefined.",
-    "THREE.Material: parameter 'map' has value of undefined.",
-    "THREE.Material: parameter 'map' has value of undefined.",
-    "THREE.Material: parameter 'map' has value of undefined.",
-    "THREE.Material: parameter 'map' has value of undefined.",
-    "THREE.Material: parameter 'map' has value of undefined.",
-    "THREE.Material: parameter 'map' has value of undefined.",
-    "sigmaRadians, 0.06, is too large and will clip, as it requested 30 samples when the maximum is set to 20",
-    "sigmaRadians, 0.06, is too large and will clip, as it requested 30 samples when the maximum is set to 20",
     "using deprecated parameters for the initialization function; pass a single object instead",
     "THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported."
   ],
-  "snapshots": [],
+  "snapshots": [
+    {
+      "ready": true,
+      "started": false,
+      "paused": true,
+      "photo": false,
+      "actor": {
+        "x": 2000,
+        "y": 3.7399999999999998,
+        "z": -420,
+        "yaw": 3.141592653589793,
+        "speed": 0,
+        "driving": false,
+        "health": 100,
+        "grounded": false
+      },
+      "car": {
+        "x": 1998,
+        "y": 3.950000047683716,
+        "z": -425,
+        "health": 100
+      },
+      "progress": {
+        "version": 1,
+        "money": 0,
+        "completed": [],
+        "bestTimes": {},
+        "discovered": [],
+        "mission": null,
+        "heat": 0,
+        "unseen": 0,
+        "playSeconds": 0
+      },
+      "world": {
+        "chunks": 9,
+        "pending": 0,
+        "colliders": 727
+      },
+      "assets": {
+        "characters": 2,
+        "landmarks": 2716
+      },
+      "traffic": {
+        "cars": 0,
+        "pedestrians": 0
+      },
+      "render": {
+        "calls": 187,
+        "triangles": 291760,
+        "geometries": 92,
+        "textures": 20,
+        "frameMs": 47.770989304653334
+      }
+    }
+  ],
   "captures": {
-    "failure": {
+    "menu": {
       "source": "Actual WebGL canvas readback, without DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 119374
+      "bytes": 116361
     }
   },
-  "startedAt": "2026-09-23T00:54:27.437Z",
+  "startedAt": "2026-09-23T01:00:01.496Z",
   "browser": "140.0.7339.16",
-  "failure": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(s.render.triangles>10000)\n\n    at file:///home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:38:65",
+  "failure": "Error: WebGL frame readback exceeded 20000ms\n    at Timeout._onTimeout (file:///home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:12:100)\n    at listOnTimeout (node:internal/timers:585:17)\n    at process.processTimers (node:internal/timers:521:7)",
   "failureSnapshot": {
     "ready": true,
-    "started": false,
-    "paused": true,
+    "started": true,
+    "paused": false,
     "photo": false,
     "actor": {
-      "x": 2000,
-      "y": 3.7399999999999998,
-      "z": -420,
+      "x": 1998,
+      "y": 3.2088832378387453,
+      "z": -452.5164794921875,
       "yaw": 3.141592653589793,
-      "speed": 0,
-      "driving": false,
+      "speed": 13.51678466796875,
+      "driving": true,
       "health": 100,
-      "grounded": false
+      "grounded": true
     },
     "car": {
       "x": 1998,
-      "y": 3.950000047683716,
-      "z": -425,
+      "y": 3.758883237838745,
+      "z": -452.5164794921875,
       "health": 100
     },
     "progress": {
@@ -60,11 +102,13 @@
       "money": 0,
       "completed": [],
       "bestTimes": {},
-      "discovered": [],
+      "discovered": [
+        "Ocean Beach"
+      ],
       "mission": null,
       "heat": 0,
-      "unseen": 0,
-      "playSeconds": 0
+      "unseen": 3.433333333333326,
+      "playSeconds": 3.433333333333326
     },
     "world": {
       "chunks": 9,
@@ -76,17 +120,17 @@
       "landmarks": 2716
     },
     "traffic": {
-      "cars": 0,
-      "pedestrians": 0
+      "cars": 6,
+      "pedestrians": 10
     },
     "render": {
-      "calls": 187,
-      "triangles": 291760,
-      "geometries": 92,
-      "textures": 20,
-      "frameMs": 48.241513404897475
+      "calls": 319,
+      "triangles": 275140,
+      "geometries": 380,
+      "textures": 76,
+      "frameMs": 118.48477055633181
     }
   },
-  "finishedAt": "2026-09-23T00:54:50.780Z",
+  "finishedAt": "2026-09-23T01:01:33.769Z",
   "serverLog": "  \u001b[32m➜\u001b[39m  \u001b[1mLocal\u001b[22m:   \u001b[36mhttp://127.0.0.1:\u001b[1m4173\u001b[22m/\u001b[39m\n"
 }
