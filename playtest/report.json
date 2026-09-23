@@ -1,5 +1,5 @@
 {
-  "phase": "passed",
+  "phase": "visual capture",
   "checks": [
     "Real renderer, reference data and physics initialized",
     "Enter nearby vehicle through keyboard input",
@@ -8,9 +8,7 @@
     "Collision-aware character walking",
     "Mission selection starts a real timed job",
     "Map pauses simulation and clears gameplay input",
-    "Long-distance travel replaces chunks and cancels active jobs",
-    "Photo camera and night lighting render at balanced quality",
-    "Versioned progress persists to local storage"
+    "Long-distance travel replaces chunks and cancels active jobs"
   ],
   "errors": [],
   "warnings": [
@@ -68,7 +66,7 @@
         "triangles": 291760,
         "geometries": 92,
         "textures": 20,
-        "frameMs": 33.27524388029078
+        "frameMs": 47.80201624798405
       }
     },
     {
@@ -119,11 +117,11 @@
         "pedestrians": 9
       },
       "render": {
-        "calls": 480,
-        "triangles": 302120,
-        "geometries": 380,
-        "textures": 64,
-        "frameMs": 96.90055477820383
+        "calls": 338,
+        "triangles": 297210,
+        "geometries": 240,
+        "textures": 62,
+        "frameMs": 103.33479046150454
       }
     },
     {
@@ -174,11 +172,11 @@
         "pedestrians": 10
       },
       "render": {
-        "calls": 182,
-        "triangles": 271924,
-        "geometries": 374,
-        "textures": 64,
-        "frameMs": 135.16086169022915
+        "calls": 316,
+        "triangles": 275182,
+        "geometries": 234,
+        "textures": 74,
+        "frameMs": 137.58432709551477
       }
     }
   ],
@@ -187,41 +185,36 @@
       "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 116270
+      "bytes": 116121
     },
     "driving": {
       "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 246451
+      "bytes": 248256
     },
     "street": {
       "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 230584
+      "bytes": 229710
     },
-    "aerial": {
+    "failure": {
       "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
       "width": 1280,
       "height": 800,
-      "bytes": 117905
-    },
-    "night": {
-      "source": "Actual WebGL canvas, simulation suspended during readback; no DOM overlay",
-      "width": 1280,
-      "height": 800,
-      "bytes": 115727
+      "bytes": 254200
     }
   },
-  "startedAt": "2026-09-23T01:28:14.514Z",
+  "startedAt": "2026-09-23T01:32:43.520Z",
   "browser": "140.0.7339.16",
   "headed": true,
-  "final": {
+  "failure": "page.waitForFunction: Timeout 45000ms exceeded.\n    at /home/runner/work/GTA-VI-Clone/GTA-VI-Clone/game/scripts/playtest.mjs:57:14",
+  "failureSnapshot": {
     "ready": true,
     "started": true,
-    "paused": true,
-    "photo": true,
+    "paused": false,
+    "photo": false,
     "actor": {
       "x": 2000,
       "y": 3.2300797843933107,
@@ -248,8 +241,8 @@
       ],
       "mission": null,
       "heat": 0,
-      "unseen": 7.183333333333313,
-      "playSeconds": 7.183333333333313
+      "unseen": 7.066666666666647,
+      "playSeconds": 7.066666666666647
     },
     "world": {
       "chunks": 25,
@@ -261,17 +254,17 @@
       "landmarks": 2716
     },
     "traffic": {
-      "cars": 8,
+      "cars": 9,
       "pedestrians": 13
     },
     "render": {
-      "calls": 755,
-      "triangles": 542102,
-      "geometries": 669,
-      "textures": 169,
-      "frameMs": 138.0783174208956
+      "calls": 501,
+      "triangles": 436678,
+      "geometries": 735,
+      "textures": 157,
+      "frameMs": 147.12871774621368
     }
   },
-  "finishedAt": "2026-09-23T01:31:15.921Z",
+  "finishedAt": "2026-09-23T01:36:09.298Z",
   "serverLog": "  \u001b[32m➜\u001b[39m  \u001b[1mLocal\u001b[22m:   \u001b[36mhttp://127.0.0.1:\u001b[1m4173\u001b[22m/\u001b[39m\n"
 }
